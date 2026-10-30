@@ -362,6 +362,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
     ),
+    "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("Login domain"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("Sign-in failed"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(
       "Use aTrust DNS for internal domains",
@@ -372,11 +373,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustNoNode": MessageLookupByLibrary.simpleMessage(
       "The current profile has no aTrust node yet.",
     ),
+    "atrustNotActive": MessageLookupByLibrary.simpleMessage(
+      "aTrust is not active in the current profile.",
+    ),
     "atrustNotSignedIn": MessageLookupByLibrary.simpleMessage("Not signed in"),
     "atrustOpenBrowserFailed": MessageLookupByLibrary.simpleMessage(
       "Could not open the sign-in page.",
     ),
     "atrustProfile": MessageLookupByLibrary.simpleMessage("Current profile"),
+    "atrustRequiredFields": MessageLookupByLibrary.simpleMessage(
+      "Server and username are required.",
+    ),
     "atrustResourceSummary": m3,
     "atrustSave": MessageLookupByLibrary.simpleMessage("Save"),
     "atrustSignIn": MessageLookupByLibrary.simpleMessage("Sign in"),
@@ -1069,10 +1076,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Saisissez le contenu de la règle",
     ),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),

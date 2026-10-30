@@ -7943,7 +7943,8 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one:
+          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8247,6 +8248,36 @@ class AppLocalizations {
     return Intl.message(
       'TCP (compatibility)',
       name: 'atrustTunnelTcp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login domain`
+  String get atrustLoginDomain {
+    return Intl.message(
+      'Login domain',
+      name: 'atrustLoginDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Server and username are required.`
+  String get atrustRequiredFields {
+    return Intl.message(
+      'Server and username are required.',
+      name: 'atrustRequiredFields',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `aTrust is not active in the current profile.`
+  String get atrustNotActive {
+    return Intl.message(
+      'aTrust is not active in the current profile.',
+      name: 'atrustNotActive',
       desc: '',
       args: [],
     );

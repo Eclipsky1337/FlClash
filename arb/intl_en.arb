@@ -995,5 +995,8 @@
     }
   },
   "atrustTunnelL3": "L3 (recommended)",
-  "atrustTunnelTcp": "TCP (compatibility)"
+  "atrustTunnelTcp": "TCP (compatibility)",
+  "atrustLoginDomain": "Login domain",
+  "atrustRequiredFields": "Server and username are required.",
+  "atrustNotActive": "aTrust is not active in the current profile."
 }

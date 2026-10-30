@@ -173,7 +173,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     final username = _usernameController.text.trim();
     final loginDomain = _loginDomainController.text.trim();
     if (server.isEmpty || username.isEmpty) {
-      setState(() => _error = 'Server and username are required.');
+      setState(() => _error = context.appLocalizations.atrustRequiredFields);
       return;
     }
     final account = AtrustAccount(
@@ -194,6 +194,10 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     try {
       await ref.read(setupActionProvider.notifier).applyProfile(force: true);
       await _refresh();
+    } catch (e) {
+      if (mounted) {
+        setState(() => _error = e.toString());
+      }
     } finally {
       if (mounted) {
         setState(() => _busy = false);
@@ -214,7 +218,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     }
     final listen = _listen;
     if (listen == null || listen.isEmpty) {
-      setState(() => _error = 'aTrust is not active in the current profile.');
+      setState(() => _error = context.appLocalizations.atrustNotActive);
       return;
     }
     setState(() {
@@ -485,7 +489,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
               TextField(
                 controller: _loginDomainController,
                 decoration: const InputDecoration(
-                  labelText: 'Login domain',
+                  labelText: l.atrustLoginDomain,
                   border: OutlineInputBorder(),
                 ),
               ),

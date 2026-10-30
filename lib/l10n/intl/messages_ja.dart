@@ -296,6 +296,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
     ),
+    "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("Login domain"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("Sign-in failed"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(
       "Use aTrust DNS for internal domains",
@@ -306,11 +307,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustNoNode": MessageLookupByLibrary.simpleMessage(
       "The current profile has no aTrust node yet.",
     ),
+    "atrustNotActive": MessageLookupByLibrary.simpleMessage(
+      "aTrust is not active in the current profile.",
+    ),
     "atrustNotSignedIn": MessageLookupByLibrary.simpleMessage("Not signed in"),
     "atrustOpenBrowserFailed": MessageLookupByLibrary.simpleMessage(
       "Could not open the sign-in page.",
     ),
     "atrustProfile": MessageLookupByLibrary.simpleMessage("Current profile"),
+    "atrustRequiredFields": MessageLookupByLibrary.simpleMessage(
+      "Server and username are required.",
+    ),
     "atrustResourceSummary": m3,
     "atrustSave": MessageLookupByLibrary.simpleMessage("Save"),
     "atrustSignIn": MessageLookupByLibrary.simpleMessage("Sign in"),

@@ -287,6 +287,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustConnected": MessageLookupByLibrary.simpleMessage("已连接"),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("会话已过期"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局账号"),
+    "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("登录域"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(
       "内网域名使用 aTrust DNS",
@@ -295,9 +296,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustNoNode": MessageLookupByLibrary.simpleMessage(
       "当前 profile 还没有 aTrust 节点。",
     ),
+    "atrustNotActive": MessageLookupByLibrary.simpleMessage(
+      "当前 profile 没有启用 aTrust。",
+    ),
     "atrustNotSignedIn": MessageLookupByLibrary.simpleMessage("未登录"),
     "atrustOpenBrowserFailed": MessageLookupByLibrary.simpleMessage("无法打开登录页。"),
     "atrustProfile": MessageLookupByLibrary.simpleMessage("当前 profile"),
+    "atrustRequiredFields": MessageLookupByLibrary.simpleMessage("服务器和账号不能为空。"),
     "atrustResourceSummary": m3,
     "atrustSave": MessageLookupByLibrary.simpleMessage("保存"),
     "atrustSignIn": MessageLookupByLibrary.simpleMessage("登录"),

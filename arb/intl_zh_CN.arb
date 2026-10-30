@@ -985,5 +985,8 @@
   "atrustGlobalAccount": "全局账号",
   "atrustProfile": "当前 profile",
   "atrustTunnelL3": "L3（推荐）",
-  "atrustTunnelTcp": "TCP（兼容）"
+  "atrustTunnelTcp": "TCP（兼容）",
+  "atrustLoginDomain": "登录域",
+  "atrustRequiredFields": "服务器和账号不能为空。",
+  "atrustNotActive": "当前 profile 没有启用 aTrust。"
 }
