@@ -552,43 +552,61 @@ Map<String, dynamic> _$ProfileTunToJson(_ProfileTun instance) =>
       'exclude-dst-port': instance.excludeDstPort,
     };
 
-_ProfileOverrides _$ProfileOverridesFromJson(Map<String, dynamic> json) =>
-    _ProfileOverrides(
-      dns: json['dns'] == null
-          ? defaultDns
-          : Dns.safeDnsFromJson(json['dns'] as Map<String, Object?>),
-      dnsOverrideKeys: json['dns-override-keys'] == null
-          ? const {}
-          : _dnsOverrideKeysFromJson(json['dns-override-keys'] as List),
-      ntp: json['ntp'] == null
-          ? defaultNtp
-          : Ntp.safeNtpFromJson(json['ntp'] as Map<String, Object?>),
-      ntpOverrideKeys: json['ntp-override-keys'] == null
-          ? const {}
-          : _ntpOverrideKeysFromJson(json['ntp-override-keys'] as List),
-      sniffer: json['sniffer'] == null
-          ? defaultSniffer
-          : Sniffer.safeSnifferFromJson(
-              json['sniffer'] as Map<String, Object?>,
-            ),
-      snifferOverrideKeys: json['sniffer-override-keys'] == null
-          ? const {}
-          : _snifferOverrideKeysFromJson(json['sniffer-override-keys'] as List),
-      tun: json['tun'] == null
-          ? defaultProfileTun
-          : ProfileTun.safeFromJson(json['tun'] as Map<String, Object?>),
-      tunOverrideKeys: json['tun-override-keys'] == null
-          ? const {}
-          : _tunOverrideKeysFromJson(json['tun-override-keys'] as List),
-      proxyProviders:
-          (json['proxy-providers'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(
-              k,
-              ProxyProviderOptions.fromJson(e as Map<String, dynamic>),
-            ),
-          ) ??
-          const {},
-    );
+_AtrustProfileSettings _$AtrustProfileSettingsFromJson(
+  Map<String, dynamic> json,
+) => _AtrustProfileSettings(
+  enabled: json['enabled'] as bool? ?? true,
+  managedRules: json['managedRules'] as bool? ?? true,
+  managedDns: json['managedDns'] as bool? ?? true,
+);
+
+Map<String, dynamic> _$AtrustProfileSettingsToJson(
+  _AtrustProfileSettings instance,
+) => <String, dynamic>{
+  'enabled': instance.enabled,
+  'managedRules': instance.managedRules,
+  'managedDns': instance.managedDns,
+};
+
+_ProfileOverrides _$ProfileOverridesFromJson(
+  Map<String, dynamic> json,
+) => _ProfileOverrides(
+  dns: json['dns'] == null
+      ? defaultDns
+      : Dns.safeDnsFromJson(json['dns'] as Map<String, Object?>),
+  dnsOverrideKeys: json['dns-override-keys'] == null
+      ? const {}
+      : _dnsOverrideKeysFromJson(json['dns-override-keys'] as List),
+  ntp: json['ntp'] == null
+      ? defaultNtp
+      : Ntp.safeNtpFromJson(json['ntp'] as Map<String, Object?>),
+  ntpOverrideKeys: json['ntp-override-keys'] == null
+      ? const {}
+      : _ntpOverrideKeysFromJson(json['ntp-override-keys'] as List),
+  sniffer: json['sniffer'] == null
+      ? defaultSniffer
+      : Sniffer.safeSnifferFromJson(json['sniffer'] as Map<String, Object?>),
+  snifferOverrideKeys: json['sniffer-override-keys'] == null
+      ? const {}
+      : _snifferOverrideKeysFromJson(json['sniffer-override-keys'] as List),
+  tun: json['tun'] == null
+      ? defaultProfileTun
+      : ProfileTun.safeFromJson(json['tun'] as Map<String, Object?>),
+  tunOverrideKeys: json['tun-override-keys'] == null
+      ? const {}
+      : _tunOverrideKeysFromJson(json['tun-override-keys'] as List),
+  atrust: json['atrust'] == null
+      ? defaultAtrustProfileSettings
+      : AtrustProfileSettings.fromJson(json['atrust'] as Map<String, dynamic>),
+  proxyProviders:
+      (json['proxy-providers'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(
+          k,
+          ProxyProviderOptions.fromJson(e as Map<String, dynamic>),
+        ),
+      ) ??
+      const {},
+);
 
 Map<String, dynamic> _$ProfileOverridesToJson(_ProfileOverrides instance) =>
     <String, dynamic>{
@@ -608,6 +626,7 @@ Map<String, dynamic> _$ProfileOverridesToJson(_ProfileOverrides instance) =>
       'tun-override-keys': instance.tunOverrideKeys
           .map((e) => _$TunOverrideKeyEnumMap[e]!)
           .toList(),
+      'atrust': instance.atrust,
       'proxy-providers': instance.proxyProviders,
     };
 

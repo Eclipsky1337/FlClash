@@ -533,6 +533,13 @@ void main() {
     );
   });
 
+  test('getAuthListen reads the core loopback address', () async {
+    final handler = _RecordingCoreHandler();
+
+    expect(await handler.getAuthListen(), '');
+    expect(handler.calls, contains(CoreMethod.getAuthListen));
+  });
+
   test('method response separates result and structured errors', () async {
     final fixture =
         json.decode(

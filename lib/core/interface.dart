@@ -64,6 +64,8 @@ mixin CoreInterface {
 
   Future<ProxiesData> getProxies();
 
+  Future<String> getAuthListen();
+
   Future<ChangeProxyResult> changeProxy(ChangeProxyParams changeProxyParams);
 
   Future<RouteSnapshot?> watchRoute(bool watch);
@@ -404,6 +406,11 @@ abstract class CoreHandlerInterface with CoreInterface {
     return data != null
         ? ProxiesData.fromJson(data)
         : const ProxiesData(proxies: {}, all: []);
+  }
+
+  @override
+  Future<String> getAuthListen() async {
+    return await _invokeMethod<String>(method: CoreMethod.getAuthListen) ?? '';
   }
 
   @override

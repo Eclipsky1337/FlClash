@@ -1627,6 +1627,20 @@ Map<String, Object?> _withLegacyTunOverride(Map<String, Object?> json) {
 }
 
 @freezed
+abstract class AtrustProfileSettings with _$AtrustProfileSettings {
+  const factory AtrustProfileSettings({
+    @Default(true) bool enabled,
+    @Default(true) bool managedRules,
+    @Default(true) bool managedDns,
+  }) = _AtrustProfileSettings;
+
+  factory AtrustProfileSettings.fromJson(Map<String, Object?> json) =>
+      _$AtrustProfileSettingsFromJson(json);
+}
+
+const defaultAtrustProfileSettings = AtrustProfileSettings();
+
+@freezed
 abstract class ProfileOverrides with _$ProfileOverrides {
   const factory ProfileOverrides({
     @Default(defaultDns) @JsonKey(fromJson: Dns.safeDnsFromJson) Dns dns,
@@ -1652,6 +1666,7 @@ abstract class ProfileOverrides with _$ProfileOverrides {
     @Default({})
     @JsonKey(name: _tunOverrideKeysJsonKey, fromJson: _tunOverrideKeysFromJson)
     Set<TunOverrideKey> tunOverrideKeys,
+    @Default(defaultAtrustProfileSettings) AtrustProfileSettings atrust,
     @Default({})
     @JsonKey(name: 'proxy-providers')
     Map<String, ProxyProviderOptions> proxyProviders,
