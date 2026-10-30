@@ -514,6 +514,7 @@ class SetupAction extends _$SetupAction {
       rawConfig = await handleEvaluate(scriptContent!, rawConfig);
     }
     final directory = await appPath.profilesPath;
+    final atrust = ref.read(appSettingProvider).atrust;
     final injected = await _resolveInjectedProviders(
       setupState,
       proxyGroups: proxyGroups,
@@ -530,6 +531,7 @@ class SetupAction extends _$SetupAction {
         rawConfig: rawConfig,
         realPatchConfig: patchConfig,
         overrides: setupState.overrides,
+        atrust: atrust,
         bypassPrivateRoute: networkSetting.bypassPrivateRoute,
         keepEmptyDnsOverrides: setupState.profileType != ProfileType.custom,
         appendSystemDns: appendSystemDns,

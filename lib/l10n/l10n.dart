@@ -7943,8 +7943,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8050,6 +8049,206 @@ class AppLocalizations {
       name: 'alreadyInLocalProxies',
       desc: '',
       args: [name],
+    );
+  }
+
+  /// `aTrust`
+  String get atrust {
+    return Intl.message('aTrust', name: 'atrust', desc: '', args: []);
+  }
+
+  /// `Sign in`
+  String get atrustSignIn {
+    return Intl.message('Sign in', name: 'atrustSignIn', desc: '', args: []);
+  }
+
+  /// `Sign out`
+  String get atrustSignOut {
+    return Intl.message('Sign out', name: 'atrustSignOut', desc: '', args: []);
+  }
+
+  /// `Sign in again`
+  String get atrustSignInAgain {
+    return Intl.message(
+      'Sign in again',
+      name: 'atrustSignInAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign-in opens your browser. Passwords and codes are never stored by FlClash.`
+  String get atrustSignInHint {
+    return Intl.message(
+      'Sign-in opens your browser. Passwords and codes are never stored by FlClash.',
+      name: 'atrustSignInHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for sign-in…`
+  String get atrustWaiting {
+    return Intl.message(
+      'Waiting for sign-in…',
+      name: 'atrustWaiting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connected`
+  String get atrustConnected {
+    return Intl.message(
+      'Connected',
+      name: 'atrustConnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not signed in`
+  String get atrustNotSignedIn {
+    return Intl.message(
+      'Not signed in',
+      name: 'atrustNotSignedIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Session expired`
+  String get atrustExpired {
+    return Intl.message(
+      'Session expired',
+      name: 'atrustExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apply to current profile`
+  String get atrustApplyToProfile {
+    return Intl.message(
+      'Apply to current profile',
+      name: 'atrustApplyToProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Route aTrust resources through aTrust`
+  String get atrustManagedRules {
+    return Intl.message(
+      'Route aTrust resources through aTrust',
+      name: 'atrustManagedRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use aTrust DNS for internal domains`
+  String get atrustManagedDns {
+    return Intl.message(
+      'Use aTrust DNS for internal domains',
+      name: 'atrustManagedDns',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tunnel mode`
+  String get atrustTunnelMode {
+    return Intl.message(
+      'Tunnel mode',
+      name: 'atrustTunnelMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{domains} domains · {cidrs} subnets`
+  String atrustResourceSummary(int domains, int cidrs) {
+    return Intl.message(
+      '$domains domains · $cidrs subnets',
+      name: 'atrustResourceSummary',
+      desc: '',
+      args: [domains, cidrs],
+    );
+  }
+
+  /// `The current profile has no aTrust node yet.`
+  String get atrustNoNode {
+    return Intl.message(
+      'The current profile has no aTrust node yet.',
+      name: 'atrustNoNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign-in failed`
+  String get atrustLoginFailed {
+    return Intl.message(
+      'Sign-in failed',
+      name: 'atrustLoginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not open the sign-in page.`
+  String get atrustOpenBrowserFailed {
+    return Intl.message(
+      'Could not open the sign-in page.',
+      name: 'atrustOpenBrowserFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get atrustSave {
+    return Intl.message('Save', name: 'atrustSave', desc: '', args: []);
+  }
+
+  /// `Global account`
+  String get atrustGlobalAccount {
+    return Intl.message(
+      'Global account',
+      name: 'atrustGlobalAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current profile`
+  String get atrustProfile {
+    return Intl.message(
+      'Current profile',
+      name: 'atrustProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `L3 (recommended)`
+  String get atrustTunnelL3 {
+    return Intl.message(
+      'L3 (recommended)',
+      name: 'atrustTunnelL3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TCP (compatibility)`
+  String get atrustTunnelTcp {
+    return Intl.message(
+      'TCP (compatibility)',
+      name: 'atrustTunnelTcp',
+      desc: '',
+      args: [],
     );
   }
 }

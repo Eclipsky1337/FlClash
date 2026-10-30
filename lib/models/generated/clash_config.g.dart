@@ -552,6 +552,26 @@ Map<String, dynamic> _$ProfileTunToJson(_ProfileTun instance) =>
       'exclude-dst-port': instance.excludeDstPort,
     };
 
+_AtrustAccount _$AtrustAccountFromJson(Map<String, dynamic> json) =>
+    _AtrustAccount(
+      server: json['server'] as String? ?? '',
+      port: (json['port'] as num?)?.toInt() ?? 443,
+      loginDomain: json['loginDomain'] as String? ?? 'Radius',
+      authType: json['authType'] as String? ?? 'auth/psw',
+      username: json['username'] as String? ?? '',
+      tunnel: json['tunnel'] as String? ?? 'l3',
+    );
+
+Map<String, dynamic> _$AtrustAccountToJson(_AtrustAccount instance) =>
+    <String, dynamic>{
+      'server': instance.server,
+      'port': instance.port,
+      'loginDomain': instance.loginDomain,
+      'authType': instance.authType,
+      'username': instance.username,
+      'tunnel': instance.tunnel,
+    };
+
 _AtrustProfileSettings _$AtrustProfileSettingsFromJson(
   Map<String, dynamic> json,
 ) => _AtrustProfileSettings(

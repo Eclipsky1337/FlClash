@@ -1627,6 +1627,27 @@ Map<String, Object?> _withLegacyTunOverride(Map<String, Object?> json) {
 }
 
 @freezed
+abstract class AtrustAccount with _$AtrustAccount {
+  const factory AtrustAccount({
+    @Default('') String server,
+    @Default(443) int port,
+    @Default('Radius') String loginDomain,
+    @Default('auth/psw') String authType,
+    @Default('') String username,
+    @Default('l3') String tunnel,
+  }) = _AtrustAccount;
+
+  factory AtrustAccount.fromJson(Map<String, Object?> json) =>
+      _$AtrustAccountFromJson(json);
+}
+
+const defaultAtrustAccount = AtrustAccount();
+
+extension AtrustAccountExt on AtrustAccount {
+  bool get isConfigured => server.isNotEmpty && username.isNotEmpty;
+}
+
+@freezed
 abstract class AtrustProfileSettings with _$AtrustProfileSettings {
   const factory AtrustProfileSettings({
     @Default(true) bool enabled,

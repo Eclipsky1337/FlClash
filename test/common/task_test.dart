@@ -864,4 +864,41 @@ void main() {
     expect(encoded, contains('first'));
     expect(encoded, contains('\n'));
   });
+
+  test('makeRealProfileTask injects the global aTrust account', () async {
+    final result = await makeRealProfileTask(
+      const MakeRealProfileState(
+        profilesPath: '/profiles',
+        profileId: 7,
+        rawConfig: {
+          'proxies': [
+            {'name': 'airport', 'type': 'ss'},
+          ],
+          'rules': ['MATCH,DIRECT'],
+        },
+        realPatchConfig: PatchClashConfig(),
+        appendSystemDns: false,
+        proxyGroups: [],
+        rules: [],
+        addedRules: [],
+        defaultUA: 'FlClash-Test',
+        atrust: AtrustAccount(
+          server: 'rvpn.zju.edu.cn',
+          username: '3230100888',
+        ),
+      ),
+    );
+    final config = loadYaml(result.yaml) as YamlMap;
+
+    expect(config['proxies'].last['type'], 'atrust');
+    expect(config['proxies'].last['username'], '3230100888');
+    expect(config['rules'], [
+      'RULE-SET,atrust-domain,atrust',
+      'RULE-SET,atrust-ip,atrust,no-resolve',
+      'MATCH,DIRECT',
+    ]);
+    expect(config['dns']['nameserver-policy'], {
+      'rule-set:atrust-domain': 'atrust://atrust',
+    });
+  });
 }

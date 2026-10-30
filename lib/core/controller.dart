@@ -185,6 +185,8 @@ class CoreController {
     return result;
   }
 
+  Future<String> getAuthListen() => _interface.getAuthListen();
+
   Future<List<Group>> getProxiesGroups({
     required ProxiesSortType sortType,
     required DelayMap delayMap,

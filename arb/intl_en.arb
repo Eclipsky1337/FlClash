@@ -963,5 +963,37 @@
   "preferred": "Preferred",
   "addToLocalProxies": "Add to local proxies",
   "addedToLocalProxies": "Added {name} to local proxies",
-  "alreadyInLocalProxies": "{name} is already in local proxies"
+  "alreadyInLocalProxies": "{name} is already in local proxies",
+  "atrust": "aTrust",
+  "atrustSignIn": "Sign in",
+  "atrustSignOut": "Sign out",
+  "atrustSignInAgain": "Sign in again",
+  "atrustSignInHint": "Sign-in opens your browser. Passwords and codes are never stored by FlClash.",
+  "atrustWaiting": "Waiting for sign-in…",
+  "atrustConnected": "Connected",
+  "atrustNotSignedIn": "Not signed in",
+  "atrustExpired": "Session expired",
+  "atrustApplyToProfile": "Apply to current profile",
+  "atrustManagedRules": "Route aTrust resources through aTrust",
+  "atrustManagedDns": "Use aTrust DNS for internal domains",
+  "atrustTunnelMode": "Tunnel mode",
+  "atrustResourceSummary": "{domains} domains · {cidrs} subnets",
+  "atrustNoNode": "The current profile has no aTrust node yet.",
+  "atrustLoginFailed": "Sign-in failed",
+  "atrustOpenBrowserFailed": "Could not open the sign-in page.",
+  "atrustSave": "Save",
+  "atrustGlobalAccount": "Global account",
+  "atrustProfile": "Current profile",
+  "@atrustResourceSummary": {
+    "placeholders": {
+      "domains": {
+        "type": "int"
+      },
+      "cidrs": {
+        "type": "int"
+      }
+    }
+  },
+  "atrustTunnelL3": "L3 (recommended)",
+  "atrustTunnelTcp": "TCP (compatibility)"
 }
