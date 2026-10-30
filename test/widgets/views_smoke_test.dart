@@ -9,6 +9,7 @@ import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/ui/paged_sheet.dart';
 import 'package:fl_clash/ui/popup.dart';
+import 'package:fl_clash/views/atrust.dart';
 import 'package:fl_clash/views/config/advanced.dart';
 import 'package:fl_clash/views/config/custom_resources.dart';
 import 'package:fl_clash/views/config/dns.dart';
@@ -53,6 +54,7 @@ void main() {
     'resources': const ResourcesView(),
     'logs': const LogsView(),
     'tools': const ToolsView(),
+    'aTrust': const AtrustView(),
     'general settings': const GeneralView(),
     'dns config': const DnsView(),
     'ntp config': NtpView(1),
