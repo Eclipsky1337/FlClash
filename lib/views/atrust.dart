@@ -321,10 +321,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
               const GlyphIcon(AppGlyphs.lock),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  l.atrust,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                child: Text(l.atrust, style: AppTextStyle.title3.of(context)),
               ),
               TonalChip(
                 label: _stateLabel(l),
