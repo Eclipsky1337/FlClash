@@ -488,9 +488,9 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
               const SizedBox(height: 12),
               TextField(
                 controller: _loginDomainController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: l.atrustLoginDomain,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 12),
