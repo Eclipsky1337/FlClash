@@ -358,6 +358,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Apply to current profile",
     ),
     "atrustConnected": MessageLookupByLibrary.simpleMessage("Connected"),
+    "atrustDisableBypass": MessageLookupByLibrary.simpleMessage(
+      "Disable private-route bypass",
+    ),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("Session expired"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
@@ -392,6 +395,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign-in opens your browser. Passwords and codes are never stored by FlClash.",
     ),
     "atrustSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "atrustTunBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
+    ),
+    "atrustTunBypassTitle": MessageLookupByLibrary.simpleMessage(
+      "TUN bypasses private networks",
+    ),
     "atrustTunnelL3": MessageLookupByLibrary.simpleMessage("L3 (recommended)"),
     "atrustTunnelMode": MessageLookupByLibrary.simpleMessage("Tunnel mode"),
     "atrustTunnelTcp": MessageLookupByLibrary.simpleMessage(
@@ -1076,9 +1085,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Saisissez le contenu de la règle",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),

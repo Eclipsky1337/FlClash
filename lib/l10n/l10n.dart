@@ -7943,8 +7943,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8278,6 +8277,36 @@ class AppLocalizations {
     return Intl.message(
       'aTrust is not active in the current profile.',
       name: 'atrustNotActive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TUN bypasses private networks`
+  String get atrustTunBypassTitle {
+    return Intl.message(
+      'TUN bypasses private networks',
+      name: 'atrustTunBypassTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.`
+  String get atrustTunBypassDesc {
+    return Intl.message(
+      'aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.',
+      name: 'atrustTunBypassDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disable private-route bypass`
+  String get atrustDisableBypass {
+    return Intl.message(
+      'Disable private-route bypass',
+      name: 'atrustDisableBypass',
       desc: '',
       args: [],
     );

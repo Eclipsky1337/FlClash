@@ -346,6 +346,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Apply to current profile",
     ),
     "atrustConnected": MessageLookupByLibrary.simpleMessage("Connected"),
+    "atrustDisableBypass": MessageLookupByLibrary.simpleMessage(
+      "Disable private-route bypass",
+    ),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("Session expired"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
@@ -380,6 +383,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign-in opens your browser. Passwords and codes are never stored by FlClash.",
     ),
     "atrustSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "atrustTunBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
+    ),
+    "atrustTunBypassTitle": MessageLookupByLibrary.simpleMessage(
+      "TUN bypasses private networks",
+    ),
     "atrustTunnelL3": MessageLookupByLibrary.simpleMessage("L3 (recommended)"),
     "atrustTunnelMode": MessageLookupByLibrary.simpleMessage("Tunnel mode"),
     "atrustTunnelTcp": MessageLookupByLibrary.simpleMessage(
@@ -1044,9 +1053,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Введите содержимое правила",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),

@@ -285,6 +285,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "应用到当前 profile",
     ),
     "atrustConnected": MessageLookupByLibrary.simpleMessage("已连接"),
+    "atrustDisableBypass": MessageLookupByLibrary.simpleMessage("关闭私有路由绕过"),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("会话已过期"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局账号"),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("登录域"),
@@ -311,6 +312,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "登录将在浏览器中完成，FlClash 不会保存密码或验证码。",
     ),
     "atrustSignOut": MessageLookupByLibrary.simpleMessage("登出"),
+    "atrustTunBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "aTrust 的内网地址（如 10.x）不会进入 TUN，SSH 和直接 IP 访问可能失败。",
+    ),
+    "atrustTunBypassTitle": MessageLookupByLibrary.simpleMessage(
+      "TUN 正在绕过私有网段",
+    ),
     "atrustTunnelL3": MessageLookupByLibrary.simpleMessage("L3（推荐）"),
     "atrustTunnelMode": MessageLookupByLibrary.simpleMessage("隧道模式"),
     "atrustTunnelTcp": MessageLookupByLibrary.simpleMessage("TCP（兼容）"),

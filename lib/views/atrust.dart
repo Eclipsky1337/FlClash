@@ -271,6 +271,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   }
 
   Future<void> _logout() async {
+    final notActive = context.appLocalizations.atrustNotActive;
     setState(() => _busy = true);
     try {
       Object? lastError;
@@ -278,7 +279,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
         await _refresh();
         final listen = _listen;
         if (listen == null) {
-          lastError = context.appLocalizations.atrustNotActive;
+          lastError = notActive;
           break;
         }
         try {
@@ -318,6 +319,46 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       return l.atrustLoginFailed;
     }
     return l.atrustNotSignedIn;
+  }
+
+  Future<void> _disableBypass() async {
+    ref
+        .read(networkSettingProvider.notifier)
+        .update((state) => state.copyWith(bypassPrivateRoute: false));
+    await ref.read(setupActionProvider.notifier).applyProfile(force: true);
+  }
+
+  Widget _buildBypassWarning(AppLocalizations l) {
+    return CommonCard(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const GlyphIcon(AppGlyphs.warning),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l.atrustTunBypassTitle,
+                  style: AppTextStyle.headline.of(context),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(l.atrustTunBypassDesc),
+          const SizedBox(height: 12),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TonalButton(
+              label: l.atrustDisableBypass,
+              onPressed: _busy ? null : _disableBypass,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildStatusCard(AppLocalizations l) {
@@ -544,6 +585,20 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   Widget build(BuildContext context) {
     final l = context.appLocalizations;
     final configured = _account.isConfigured;
+    final profileId = ref.watch(currentProfileIdProvider);
+    final profile = profileId == null
+        ? null
+        : ref.watch(profileProvider(profileId));
+    final showBypassWarning =
+        configured &&
+        profile != null &&
+        profile.overrides.atrust.enabled &&
+        ref.watch(
+          patchClashConfigProvider.select((state) => state.tun.enable),
+        ) &&
+        ref.watch(
+          networkSettingProvider.select((state) => state.bypassPrivateRoute),
+        );
     return CommonScaffold(
       title: l.atrust,
       body: ListView(
@@ -555,6 +610,10 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
         ),
         children: [
           if (configured) _buildStatusCard(l),
+          if (showBypassWarning) ...[
+            const SizedBox(height: 16),
+            _buildBypassWarning(l),
+          ],
           if (!configured) ...[
             Padding(
               padding: const EdgeInsets.only(bottom: 16),

@@ -338,6 +338,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Apply to current profile",
     ),
     "atrustConnected": MessageLookupByLibrary.simpleMessage("Connected"),
+    "atrustDisableBypass": MessageLookupByLibrary.simpleMessage(
+      "Disable private-route bypass",
+    ),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("Session expired"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
@@ -372,6 +375,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign-in opens your browser. Passwords and codes are never stored by FlClash.",
     ),
     "atrustSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "atrustTunBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
+    ),
+    "atrustTunBypassTitle": MessageLookupByLibrary.simpleMessage(
+      "TUN bypasses private networks",
+    ),
     "atrustTunnelL3": MessageLookupByLibrary.simpleMessage("L3 (recommended)"),
     "atrustTunnelMode": MessageLookupByLibrary.simpleMessage("Tunnel mode"),
     "atrustTunnelTcp": MessageLookupByLibrary.simpleMessage(
@@ -1010,9 +1019,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Enter the rule content",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),

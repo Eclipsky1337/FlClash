@@ -998,5 +998,8 @@
   "atrustTunnelTcp": "TCP (compatibility)",
   "atrustLoginDomain": "Login domain",
   "atrustRequiredFields": "Server and username are required.",
-  "atrustNotActive": "aTrust is not active in the current profile."
+  "atrustNotActive": "aTrust is not active in the current profile.",
+  "atrustTunBypassTitle": "TUN bypasses private networks",
+  "atrustTunBypassDesc": "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
+  "atrustDisableBypass": "Disable private-route bypass"
 }

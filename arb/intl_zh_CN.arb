@@ -988,5 +988,8 @@
   "atrustTunnelTcp": "TCP（兼容）",
   "atrustLoginDomain": "登录域",
   "atrustRequiredFields": "服务器和账号不能为空。",
-  "atrustNotActive": "当前 profile 没有启用 aTrust。"
+  "atrustNotActive": "当前 profile 没有启用 aTrust。",
+  "atrustTunBypassTitle": "TUN 正在绕过私有网段",
+  "atrustTunBypassDesc": "aTrust 的内网地址（如 10.x）不会进入 TUN，SSH 和直接 IP 访问可能失败。",
+  "atrustDisableBypass": "关闭私有路由绕过"
 }
