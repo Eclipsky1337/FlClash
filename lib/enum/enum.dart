@@ -559,6 +559,7 @@ enum PageLabel {
   dashboard,
   proxies,
   profiles,
+  atrust,
   tools,
   logs,
   requests,

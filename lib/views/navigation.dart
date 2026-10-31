@@ -36,6 +36,13 @@ class Navigation implements NavigationPort {
             const ProfilesView(key: GlobalObjectKey(PageLabel.profiles)),
       ),
       NavigationItem(
+        glyph: AppGlyphs.vpn,
+        label: PageLabel.atrust,
+        builder: (_) =>
+            const AtrustView(key: GlobalObjectKey(PageLabel.atrust)),
+        modes: [NavigationItemMode.desktop, NavigationItemMode.mobile],
+      ),
+      NavigationItem(
         glyph: AppGlyphs.requests,
         label: PageLabel.requests,
         builder: (_) =>
