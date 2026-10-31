@@ -287,10 +287,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustConnected": MessageLookupByLibrary.simpleMessage("已连接"),
     "atrustDisableBypass": MessageLookupByLibrary.simpleMessage("关闭私有路由绕过"),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("会话已过期"),
-    "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局注入账号"),
-    "atrustGlobalAccountDesc": MessageLookupByLibrary.simpleMessage(
-      "全局账号仅用于向当前 profile 注入 aTrust 节点；profile 自带的 aTrust 节点由上方管理。",
-    ),
+    "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局账号"),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("登录域"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(
@@ -311,9 +308,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustSave": MessageLookupByLibrary.simpleMessage("保存"),
     "atrustSignIn": MessageLookupByLibrary.simpleMessage("登录"),
     "atrustSignInAgain": MessageLookupByLibrary.simpleMessage("重新登录"),
-    "atrustSignInHint": MessageLookupByLibrary.simpleMessage(
-      "登录将在浏览器中完成，FlClash 不会保存密码或验证码。",
-    ),
     "atrustSignOut": MessageLookupByLibrary.simpleMessage("登出"),
     "atrustTunBypassDesc": MessageLookupByLibrary.simpleMessage(
       "aTrust 的内网地址（如 10.x）不会进入 TUN，SSH 和直接 IP 访问可能失败。",

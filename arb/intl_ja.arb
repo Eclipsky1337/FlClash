@@ -968,7 +968,6 @@
   "atrustSignIn": "Sign in",
   "atrustSignOut": "Sign out",
   "atrustSignInAgain": "Sign in again",
-  "atrustSignInHint": "Sign-in opens your browser. Passwords and codes are never stored by FlClash.",
   "atrustWaiting": "Waiting for sign-in…",
   "atrustConnected": "Connected",
   "atrustNotSignedIn": "Not signed in",
@@ -991,6 +990,5 @@
   "atrustNotActive": "aTrust is not active in the current profile.",
   "atrustTunBypassTitle": "TUN bypasses private networks",
   "atrustTunBypassDesc": "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
-  "atrustDisableBypass": "Disable private-route bypass",
-  "atrustGlobalAccountDesc": "The global account only controls the injected aTrust node. Nodes declared in the profile are managed above."
+  "atrustDisableBypass": "Disable private-route bypass"
 }

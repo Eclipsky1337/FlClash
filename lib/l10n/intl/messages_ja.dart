@@ -299,9 +299,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
     ),
-    "atrustGlobalAccountDesc": MessageLookupByLibrary.simpleMessage(
-      "The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.",
-    ),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("Login domain"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("Sign-in failed"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(
@@ -328,9 +325,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustSave": MessageLookupByLibrary.simpleMessage("Save"),
     "atrustSignIn": MessageLookupByLibrary.simpleMessage("Sign in"),
     "atrustSignInAgain": MessageLookupByLibrary.simpleMessage("Sign in again"),
-    "atrustSignInHint": MessageLookupByLibrary.simpleMessage(
-      "Sign-in opens your browser. Passwords and codes are never stored by FlClash.",
-    ),
     "atrustSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
     "atrustTunBypassDesc": MessageLookupByLibrary.simpleMessage(
       "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",

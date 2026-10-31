@@ -8077,16 +8077,6 @@ class AppLocalizations {
     );
   }
 
-  /// `Sign-in opens your browser. Passwords and codes are never stored by FlClash.`
-  String get atrustSignInHint {
-    return Intl.message(
-      'Sign-in opens your browser. Passwords and codes are never stored by FlClash.',
-      name: 'atrustSignInHint',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Waiting for sign-in…`
   String get atrustWaiting {
     return Intl.message(
@@ -8212,10 +8202,10 @@ class AppLocalizations {
     return Intl.message('Save', name: 'atrustSave', desc: '', args: []);
   }
 
-  /// `Global injection account`
+  /// `Global account`
   String get atrustGlobalAccount {
     return Intl.message(
-      'Global injection account',
+      'Global account',
       name: 'atrustGlobalAccount',
       desc: '',
       args: [],
@@ -8307,16 +8297,6 @@ class AppLocalizations {
     return Intl.message(
       'Disable private-route bypass',
       name: 'atrustDisableBypass',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.`
-  String get atrustGlobalAccountDesc {
-    return Intl.message(
-      'The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.',
-      name: 'atrustGlobalAccountDesc',
       desc: '',
       args: [],
     );

@@ -388,6 +388,15 @@ void main() {
       desktop.navigationItems[desktop.currentIndex].label,
       PageLabel.connections,
     );
+    final labels = desktop.navigationItems.map((item) => item.label).toList();
+    expect(
+      labels.indexOf(PageLabel.atrust),
+      greaterThan(labels.indexOf(PageLabel.connections)),
+    );
+    expect(
+      labels.indexOf(PageLabel.atrust),
+      lessThan(labels.indexOf(PageLabel.tools)),
+    );
 
     container
         .read(currentPageLabelProvider.notifier)

@@ -472,11 +472,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
           ],
           if (pending) ...[
             const SizedBox(height: 16),
-            Text(
-              l.atrustSignInHint,
-              style: TextStyle(color: context.colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: 12),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: TonalButton(
@@ -639,7 +634,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
           ),
         ),
       ],
-      footer: l.atrustGlobalAccountDesc,
     );
   }
 
