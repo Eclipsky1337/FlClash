@@ -221,6 +221,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     @Default(ProfileOverrides()) ProfileOverrides overrides,
     @Default(defaultAtrustAccount) AtrustAccount atrust,
     @Default(false) bool bypassPrivateRoute,
+    @Default(false) bool profileHasAtrust,
 
     /// Set for a subscription, whose own DNS values an emptied entry replaces.
     @Default(false) bool keepEmptyDnsOverrides,

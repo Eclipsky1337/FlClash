@@ -377,6 +377,7 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       rawConfig: rawConfig,
       account: data.atrust,
       settings: overrides.atrust,
+      profileHasAtrust: data.profileHasAtrust,
     );
   }
   final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));

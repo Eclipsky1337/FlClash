@@ -515,6 +515,11 @@ class SetupAction extends _$SetupAction {
     }
     final directory = await appPath.profilesPath;
     final atrust = ref.read(appSettingProvider).atrust;
+    final profileHasAtrust =
+        profileBase != null &&
+        atrust.isConfigured &&
+        setupState.overrides.atrust.enabled &&
+        await _profileHasAtrust(profileId);
     final injected = await _resolveInjectedProviders(
       setupState,
       proxyGroups: proxyGroups,
@@ -533,6 +538,7 @@ class SetupAction extends _$SetupAction {
         overrides: setupState.overrides,
         atrust: atrust,
         bypassPrivateRoute: networkSetting.bypassPrivateRoute,
+        profileHasAtrust: profileHasAtrust,
         keepEmptyDnsOverrides: setupState.profileType != ProfileType.custom,
         appendSystemDns: appendSystemDns,
         addedRules: setupState.addedRules,
@@ -560,6 +566,21 @@ class SetupAction extends _$SetupAction {
       ),
       base: SetupBase(path: path, overlay: res.yaml),
     );
+  }
+
+  Future<bool> _profileHasAtrust(int profileId) async {
+    try {
+      final outbounds = await _core.getProfileOutbounds(profileId);
+      final proxies = outbounds['proxies'];
+      return proxies is List &&
+          proxies.any(
+            (proxy) =>
+                proxy is Map &&
+                proxy['type']?.toString().toLowerCase() == atrustProxyName,
+          );
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Only what the custom profile actually references is injected, so an

@@ -26,11 +26,12 @@ Map<String, dynamic> injectAtrustConfig({
   required Map<String, dynamic> rawConfig,
   required AtrustAccount account,
   required AtrustProfileSettings settings,
+  bool profileHasAtrust = false,
 }) {
   if (!settings.enabled || !account.isConfigured) {
     return rawConfig;
   }
-  if (hasAtrustProxy(rawConfig)) {
+  if (profileHasAtrust || hasAtrustProxy(rawConfig)) {
     return rawConfig;
   }
 

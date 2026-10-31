@@ -906,4 +906,38 @@ void main() {
       'rule-set:atrust-domain': 'atrust://atrust',
     });
   });
+
+  test(
+    'makeRealProfileTask skips injection for profile-owned aTrust',
+    () async {
+      final result = await makeRealProfileTask(
+        const MakeRealProfileState(
+          profilesPath: '/profiles',
+          profileId: 7,
+          rawConfig: {
+            'proxies': [
+              {'name': 'airport', 'type': 'ss'},
+            ],
+            'rules': ['MATCH,DIRECT'],
+          },
+          realPatchConfig: PatchClashConfig(),
+          appendSystemDns: false,
+          proxyGroups: [],
+          rules: [],
+          addedRules: [],
+          defaultUA: 'FlClash-Test',
+          profileHasAtrust: true,
+          atrust: AtrustAccount(
+            server: 'rvpn.zju.edu.cn',
+            username: '3230100888',
+          ),
+        ),
+      );
+      final config = loadYaml(result.yaml) as YamlMap;
+
+      expect(config['proxies'], hasLength(1));
+      expect(config['rules'], ['MATCH,DIRECT']);
+      expect(config['dns']['nameserver-policy'], isNull);
+    },
+  );
 }
