@@ -162,12 +162,34 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   }
 
   Future<void> _pollOnce() async {
-    if (_polling || _listen == null) {
+    if (_polling) {
       return;
     }
     _polling = true;
     try {
-      final providers = await AtrustAuthApi(_listen!).providers();
+      if (_listen == null) {
+        await _refresh();
+        return;
+      }
+      final listen = await ref.read(coreHandlerProvider).getAuthListen();
+      if (listen.isEmpty) {
+        await _refresh();
+        return;
+      }
+      _listen = listen;
+      List<AtrustStatus> providers;
+      try {
+        providers = await AtrustAuthApi(listen).providers();
+      } on AtrustAuthException catch (e) {
+        // A config reload recreates the auth listener on a new port. Rebind
+        // once instead of leaving the page on its last pending snapshot.
+        if (!e.retryable) {
+          rethrow;
+        }
+        _listen = null;
+        await _refresh();
+        return;
+      }
       if (!mounted) {
         return;
       }
