@@ -143,8 +143,8 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 	}
 	for _, key := range profileBaseSections {
 		baseValue := mappingValue(profile, key)
-		if key == "proxies" {
-			if merged := mergeProxySequences(baseValue, mappingValue(root, key)); merged != nil {
+		if key == "proxies" || key == "proxy-groups" {
+			if merged := mergeNamedSequences(baseValue, mappingValue(root, key)); merged != nil {
 				setMappingValue(root, key, merged)
 			}
 			continue
@@ -166,10 +166,10 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 	return &yaml.Node{Kind: yaml.DocumentNode, Content: []*yaml.Node{root}}, nil
 }
 
-// mergeProxySequences keeps the profile's large proxy list and appends the
-// proxies the host injected into the overlay, which the base merge would
+// mergeNamedSequences keeps the profile's large proxy/group list and appends
+// the entries the host injected into the overlay, which the base merge would
 // otherwise replace. The profile wins when both sides use one name.
-func mergeProxySequences(base, overlay *yaml.Node) *yaml.Node {
+func mergeNamedSequences(base, overlay *yaml.Node) *yaml.Node {
 	if base == nil {
 		return overlay
 	}
@@ -178,14 +178,14 @@ func mergeProxySequences(base, overlay *yaml.Node) *yaml.Node {
 	}
 	names := map[string]struct{}{}
 	for _, item := range base.Content {
-		if name := proxyNodeName(item); name != "" {
+		if name := nodeName(item); name != "" {
 			names[name] = struct{}{}
 		}
 	}
 	merged := &yaml.Node{Kind: yaml.SequenceNode, Tag: base.Tag, Style: base.Style}
 	merged.Content = append(merged.Content, base.Content...)
 	for _, item := range overlay.Content {
-		name := proxyNodeName(item)
+		name := nodeName(item)
 		if name == "" {
 			continue
 		}
@@ -198,7 +198,7 @@ func mergeProxySequences(base, overlay *yaml.Node) *yaml.Node {
 	return merged
 }
 
-func proxyNodeName(node *yaml.Node) string {
+func nodeName(node *yaml.Node) string {
 	if node.Kind != yaml.MappingNode {
 		return ""
 	}

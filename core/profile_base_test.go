@@ -196,14 +196,14 @@ func TestLoadConfigWithBasePutsTheAddedRulesFirstAndTheOverlayOverTheRest(t *tes
 	}
 }
 
-func TestLoadConfigWithBaseKeepsInjectedProxies(t *testing.T) {
+func TestLoadConfigWithBaseKeepsInjectedProxiesAndGroups(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
 	base, err := handleGetProfileBase(path)
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}
 	overlay := overlayOf(t, base, []string{
-		"RULE-SET,atrust-domain,atrust",
+		"RULE-SET,atrust-domain,aTrust",
 		"MATCH,DIRECT",
 	}, map[string]any{
 		"proxies": []any{
@@ -213,6 +213,13 @@ func TestLoadConfigWithBaseKeepsInjectedProxies(t *testing.T) {
 				"server": "vpn.example.edu",
 			},
 		},
+		"proxy-groups": []any{
+			map[string]any{
+				"name":    "aTrust",
+				"type":    "select",
+				"proxies": []string{"a", "atrust"},
+			},
+		},
 	})
 	configPath := filepath.Join(t.TempDir(), "config.yaml")
 
@@ -220,7 +227,7 @@ func TestLoadConfigWithBaseKeepsInjectedProxies(t *testing.T) {
 	if err != nil {
 		t.Fatalf("loadConfigWithBase = %v", err)
 	}
-	for _, name := range []string{"a", "b", "atrust"} {
+	for _, name := range []string{"a", "b", "atrust", "aTrust"} {
 		if cfg.Proxies[name] == nil {
 			t.Errorf("proxy %s is missing", name)
 		}

@@ -42,7 +42,7 @@ void main() {
     expect(config['rules'], ['MATCH,DIRECT']);
   });
 
-  test('adds the node, rules and DNS policy', () {
+  test('adds the node, group, rules and DNS policy', () {
     final config = _config();
     injectAtrustConfig(
       rawConfig: config,
@@ -62,9 +62,16 @@ void main() {
       'tunnel': 'l3',
       'udp': true,
     });
+    expect(config['proxy-groups'], [
+      {
+        'name': 'aTrust',
+        'type': 'select',
+        'proxies': ['atrust', 'DIRECT'],
+      },
+    ]);
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,atrust',
-      'RULE-SET,atrust-ip,atrust',
+      'RULE-SET,atrust-domain,aTrust',
+      'RULE-SET,atrust-ip,aTrust',
       'MATCH,DIRECT',
     ]);
     expect(config['dns'], {
@@ -99,6 +106,7 @@ void main() {
       ),
     );
     expect(config['proxies'], hasLength(2));
+    expect(config['proxy-groups'], isNull);
     expect(config['rules'], ['MATCH,DIRECT']);
     expect(config['dns'], isNull);
   });
@@ -116,9 +124,10 @@ void main() {
       settings: defaultAtrustProfileSettings,
     );
     expect(config['proxies'], hasLength(2));
+    expect(config['proxy-groups'], hasLength(1));
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,atrust',
-      'RULE-SET,atrust-ip,atrust',
+      'RULE-SET,atrust-domain,aTrust',
+      'RULE-SET,atrust-ip,aTrust',
       'MATCH,DIRECT',
     ]);
   });
@@ -132,13 +141,39 @@ void main() {
       settings: defaultAtrustProfileSettings,
     );
     expect((config['proxies'] as List).last['name'], 'atrust-2');
+    expect((config['proxy-groups'] as List).last['proxies'], [
+      'atrust-2',
+      'DIRECT',
+    ]);
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,atrust-2',
-      'RULE-SET,atrust-ip,atrust-2',
+      'RULE-SET,atrust-domain,aTrust',
+      'RULE-SET,atrust-ip,aTrust',
       'MATCH,DIRECT',
     ]);
     expect((config['dns'] as Map)['nameserver-policy'], {
       'rule-set:atrust-domain': 'atrust://atrust-2',
     });
+  });
+
+  test('picks a free group name when aTrust is taken', () {
+    final config = _config()
+      ..['proxy-groups'] = [
+        {
+          'name': 'aTrust',
+          'type': 'select',
+          'proxies': ['airport'],
+        },
+      ];
+    injectAtrustConfig(
+      rawConfig: config,
+      account: _account,
+      settings: defaultAtrustProfileSettings,
+    );
+    expect((config['proxy-groups'] as List).last['name'], 'aTrust-2');
+    expect(config['rules'], [
+      'RULE-SET,atrust-domain,aTrust-2',
+      'RULE-SET,atrust-ip,aTrust-2',
+      'MATCH,DIRECT',
+    ]);
   });
 }

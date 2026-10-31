@@ -1,6 +1,7 @@
 import 'package:fl_clash/models/models.dart';
 
 const atrustProxyName = 'atrust';
+const atrustGroupName = 'aTrust';
 const atrustDomainProvider = 'atrust-domain';
 const atrustIpProvider = 'atrust-ip';
 const atrustFallbackProxyServerNameserver = 'https://doh.pub/dns-query';
@@ -51,12 +52,23 @@ Map<String, dynamic> injectAtrustConfig({
   rawConfig['proxies'] = proxies;
 
   if (settings.managedRules) {
+    final groups = rawConfig['proxy-groups'] is List
+        ? List<Object?>.from(rawConfig['proxy-groups'] as List)
+        : <Object?>[];
+    final groupName = _uniqueGroupName(groups);
+    groups.add({
+      'name': groupName,
+      'type': 'select',
+      'proxies': [name, 'DIRECT'],
+    });
+    rawConfig['proxy-groups'] = groups;
+
     final rules = rawConfig['rules'] is List
         ? List<String>.from(rawConfig['rules'] as List)
         : <String>[];
     for (final rule in [
-      'RULE-SET,$atrustIpProvider,$name',
-      'RULE-SET,$atrustDomainProvider,$name',
+      'RULE-SET,$atrustIpProvider,$groupName',
+      'RULE-SET,$atrustDomainProvider,$groupName',
     ]) {
       if (!rules.contains(rule)) {
         rules.insert(0, rule);
@@ -101,4 +113,19 @@ String _uniqueProxyName(List<Object?> proxies) {
     index++;
   }
   return '$atrustProxyName-$index';
+}
+
+String _uniqueGroupName(List<Object?> groups) {
+  final names = {
+    for (final group in groups)
+      if (group is Map && group['name'] != null) group['name'].toString(),
+  };
+  if (!names.contains(atrustGroupName)) {
+    return atrustGroupName;
+  }
+  var index = 2;
+  while (names.contains('$atrustGroupName-$index')) {
+    index++;
+  }
+  return '$atrustGroupName-$index';
 }
