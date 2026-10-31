@@ -271,17 +271,29 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   }
 
   Future<void> _logout() async {
-    await _refresh();
-    final listen = _listen;
-    if (listen == null) {
-      return;
-    }
     setState(() => _busy = true);
     try {
-      await AtrustAuthApi(listen).logout(_status?.name ?? atrustProxyName);
-    } catch (e) {
-      if (mounted) {
-        setState(() => _error = e.toString());
+      Object? lastError;
+      for (var attempt = 0; attempt < 2; attempt++) {
+        await _refresh();
+        final listen = _listen;
+        if (listen == null) {
+          lastError = context.appLocalizations.atrustNotActive;
+          break;
+        }
+        try {
+          await AtrustAuthApi(listen).logout(_status?.name ?? atrustProxyName);
+          lastError = null;
+          break;
+        } catch (e) {
+          lastError = e;
+          if (attempt == 0) {
+            await Future<void>.delayed(const Duration(milliseconds: 250));
+          }
+        }
+      }
+      if (mounted && lastError != null) {
+        setState(() => _error = lastError.toString());
       }
     } finally {
       if (mounted) {
