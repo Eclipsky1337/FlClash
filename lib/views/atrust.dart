@@ -19,7 +19,8 @@ class AtrustView extends ConsumerStatefulWidget {
   ConsumerState<AtrustView> createState() => _AtrustViewState();
 }
 
-class _AtrustViewState extends ConsumerState<AtrustView> {
+class _AtrustViewState extends ConsumerState<AtrustView>
+    with WidgetsBindingObserver {
   late final TextEditingController _serverController;
   late final TextEditingController _usernameController;
   late final TextEditingController _loginDomainController;
@@ -29,11 +30,13 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   var _providers = <AtrustStatus>[];
   String? _selectedName;
   String? _sessionProvider;
+  String? _loginProvider;
   AtrustSession? _session;
   String? _listen;
   String? _error;
   var _busy = false;
   var _polling = false;
+  var _pollFailures = 0;
 
   AtrustAccount get _account => ref.read(appSettingProvider).atrust;
 
@@ -53,6 +56,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     final account = _account;
     _serverController = TextEditingController(text: account.server);
     _usernameController = TextEditingController(text: account.username);
@@ -62,7 +66,15 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_refresh());
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _poll?.cancel();
     _serverController.dispose();
     _usernameController.dispose();
@@ -82,6 +94,8 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
           _listen = null;
           _providers = <AtrustStatus>[];
           _selectedName = null;
+          _loginProvider = null;
+          _busy = false;
           _error = null;
         });
         return;
@@ -113,16 +127,21 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     final status = ordered
         .where((provider) => provider.name == selected)
         .firstOrNull;
+    _pollFailures = 0;
     setState(() {
       _listen = listen;
       _providers = ordered;
       _selectedName = selected;
       _error = status?.error.isNotEmpty == true ? status!.error : null;
-      if (status?.isReady == true ||
-          status?.state == 'error' ||
-          status?.state == 'expired' ||
-          status == null) {
-        _busy = false;
+      final loginName = _loginProvider;
+      if (loginName != null) {
+        final loginStatus = ordered
+            .where((provider) => provider.name == loginName)
+            .firstOrNull;
+        if (loginStatus == null || !loginStatus.isPending) {
+          _loginProvider = null;
+          _busy = false;
+        }
       }
     });
     if (ordered.any((provider) => provider.isPending)) {
@@ -195,13 +214,16 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       }
       _applyProviders(_listen!, providers);
     } catch (e) {
+      _pollFailures++;
       if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _busy = false;
-        });
+        setState(() => _error = e.toString());
       }
-      _stopPolling();
+      if (_pollFailures >= 5) {
+        if (mounted) {
+          setState(() => _busy = false);
+        }
+        _stopPolling();
+      }
     } finally {
       _polling = false;
     }
@@ -257,6 +279,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       setState(() {
         _session = session;
         _sessionProvider = _status?.name;
+        _loginProvider = _status?.name;
       });
       final opened = await launchUrl(
         Uri.parse(session.url),
@@ -270,6 +293,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       if (mounted) {
         setState(() {
           _busy = false;
+          _loginProvider = null;
           _error = e.toString();
         });
       }
@@ -314,6 +338,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
         _busy = false;
         _session = null;
         _sessionProvider = null;
+        _loginProvider = null;
       });
       await _refresh();
     }
@@ -351,7 +376,12 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       }
     } finally {
       if (mounted) {
-        setState(() => _busy = false);
+        setState(() {
+          _busy = false;
+          _session = null;
+          _sessionProvider = null;
+          _loginProvider = null;
+        });
       }
       await _refresh();
     }
@@ -661,6 +691,12 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<int?>(currentProfileIdProvider, (previous, next) {
+      if (previous != next) {
+        _stopPolling();
+        unawaited(_refresh());
+      }
+    });
     final l = context.appLocalizations;
     final hasProviders = _providers.isNotEmpty;
     final profileId = ref.watch(currentProfileIdProvider);

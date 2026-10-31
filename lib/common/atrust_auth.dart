@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -160,8 +161,13 @@ class AtrustAuthApi {
       );
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
       request.contentLength = 0;
-      final response = await request.close();
-      final body = await utf8.decoder.bind(response).join();
+      final response = await request.close().timeout(
+        const Duration(seconds: 10),
+      );
+      final body = await utf8.decoder
+          .bind(response)
+          .join()
+          .timeout(const Duration(seconds: 10));
       final data = body.isEmpty
           ? <String, Object?>{}
           : Map<String, Object?>.from(jsonDecode(body) as Map);
@@ -175,6 +181,8 @@ class AtrustAuthApi {
     } on AtrustAuthException {
       rethrow;
     } on SocketException catch (e) {
+      throw AtrustAuthException(e.toString(), retryable: true);
+    } on TimeoutException catch (e) {
       throw AtrustAuthException(e.toString(), retryable: true);
     } catch (e) {
       throw AtrustAuthException(e.toString());
