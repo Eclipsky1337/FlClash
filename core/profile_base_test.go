@@ -196,6 +196,37 @@ func TestLoadConfigWithBasePutsTheAddedRulesFirstAndTheOverlayOverTheRest(t *tes
 	}
 }
 
+func TestLoadConfigWithBaseKeepsInjectedProxies(t *testing.T) {
+	path := writeBaseProfile(t, baseProfile)
+	base, err := handleGetProfileBase(path)
+	if err != nil {
+		t.Fatalf("handleGetProfileBase = %v", err)
+	}
+	overlay := overlayOf(t, base, []string{
+		"RULE-SET,atrust-domain,atrust",
+		"MATCH,DIRECT",
+	}, map[string]any{
+		"proxies": []any{
+			map[string]any{
+				"name":   "atrust",
+				"type":   "atrust",
+				"server": "vpn.example.edu",
+			},
+		},
+	})
+	configPath := filepath.Join(t.TempDir(), "config.yaml")
+
+	cfg, err := loadConfigWithBase(&SetupBase{Path: path, Overlay: overlay}, configPath)
+	if err != nil {
+		t.Fatalf("loadConfigWithBase = %v", err)
+	}
+	for _, name := range []string{"a", "b", "atrust"} {
+		if cfg.Proxies[name] == nil {
+			t.Errorf("proxy %s is missing", name)
+		}
+	}
+}
+
 // The Android service and mihomo's controller reload config.yaml without the
 // profile, and the anchor it was written with sits in a section the overlay drops.
 func TestLoadConfigWithBaseWritesAConfigThatLoadsAlone(t *testing.T) {

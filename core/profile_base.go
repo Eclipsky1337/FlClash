@@ -142,8 +142,15 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 		return nil, err
 	}
 	for _, key := range profileBaseSections {
-		if value := mappingValue(profile, key); value != nil {
-			setMappingValue(root, key, value)
+		baseValue := mappingValue(profile, key)
+		if key == "proxies" {
+			if merged := mergeProxySequences(baseValue, mappingValue(root, key)); merged != nil {
+				setMappingValue(root, key, merged)
+			}
+			continue
+		}
+		if baseValue != nil {
+			setMappingValue(root, key, baseValue)
 		}
 	}
 	rules, err := appendRules(mappingValue(root, "rules"), mappingValue(profile, "rules"))
@@ -157,6 +164,50 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 		retagShortIDs(root)
 	}
 	return &yaml.Node{Kind: yaml.DocumentNode, Content: []*yaml.Node{root}}, nil
+}
+
+// mergeProxySequences keeps the profile's large proxy list and appends the
+// proxies the host injected into the overlay, which the base merge would
+// otherwise replace. The profile wins when both sides use one name.
+func mergeProxySequences(base, overlay *yaml.Node) *yaml.Node {
+	if base == nil {
+		return overlay
+	}
+	if overlay == nil || overlay.Kind != yaml.SequenceNode {
+		return base
+	}
+	names := map[string]struct{}{}
+	for _, item := range base.Content {
+		if name := proxyNodeName(item); name != "" {
+			names[name] = struct{}{}
+		}
+	}
+	merged := &yaml.Node{Kind: yaml.SequenceNode, Tag: base.Tag, Style: base.Style}
+	merged.Content = append(merged.Content, base.Content...)
+	for _, item := range overlay.Content {
+		name := proxyNodeName(item)
+		if name == "" {
+			continue
+		}
+		if _, exists := names[name]; exists {
+			continue
+		}
+		names[name] = struct{}{}
+		merged.Content = append(merged.Content, item)
+	}
+	return merged
+}
+
+func proxyNodeName(node *yaml.Node) string {
+	if node.Kind != yaml.MappingNode {
+		return ""
+	}
+	for i := 0; i+1 < len(node.Content); i += 2 {
+		if node.Content[i].Value == "name" {
+			return node.Content[i+1].Value
+		}
+	}
+	return ""
 }
 
 func documentMapping(document *yaml.Node) (*yaml.Node, error) {
