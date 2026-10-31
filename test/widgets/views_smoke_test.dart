@@ -1,9 +1,12 @@
+import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
@@ -88,6 +91,10 @@ void main() {
           globalRulesProvider.overrideWith(TestGlobalRules.new),
           iconSetsProvider.overrideWith(TestIconSets.new),
           clashProvidersProvider.overrideWith(TestClashProviders.new),
+          if (entry.key == 'aTrust')
+            coreHandlerProvider.overrideWithValue(
+              CoreController.test(_EmptyCoreHandler()),
+            ),
         ],
       );
       addTearDown(container.dispose);
@@ -519,4 +526,12 @@ class _TestProxyGroups extends ProxyGroups {
 
   @override
   void order(int oldIndex, int newIndex) {}
+}
+
+class _EmptyCoreHandler implements CoreHandlerInterface {
+  @override
+  Future<String> getAuthListen() async => '';
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

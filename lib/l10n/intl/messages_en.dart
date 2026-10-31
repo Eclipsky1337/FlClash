@@ -343,7 +343,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("Session expired"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
-      "Global account",
+      "Global injection account",
+    ),
+    "atrustGlobalAccountDesc": MessageLookupByLibrary.simpleMessage(
+      "The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.",
     ),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("Login domain"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("Sign-in failed"),

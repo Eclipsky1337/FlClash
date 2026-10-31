@@ -8212,10 +8212,10 @@ class AppLocalizations {
     return Intl.message('Save', name: 'atrustSave', desc: '', args: []);
   }
 
-  /// `Global account`
+  /// `Global injection account`
   String get atrustGlobalAccount {
     return Intl.message(
-      'Global account',
+      'Global injection account',
       name: 'atrustGlobalAccount',
       desc: '',
       args: [],
@@ -8307,6 +8307,16 @@ class AppLocalizations {
     return Intl.message(
       'Disable private-route bypass',
       name: 'atrustDisableBypass',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.`
+  String get atrustGlobalAccountDesc {
+    return Intl.message(
+      'The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.',
+      name: 'atrustGlobalAccountDesc',
       desc: '',
       args: [],
     );

@@ -982,7 +982,7 @@
   "atrustLoginFailed": "Sign-in failed",
   "atrustOpenBrowserFailed": "Could not open the sign-in page.",
   "atrustSave": "Save",
-  "atrustGlobalAccount": "Global account",
+  "atrustGlobalAccount": "Global injection account",
   "atrustProfile": "Current profile",
   "@atrustResourceSummary": {
     "placeholders": {
@@ -1001,5 +1001,6 @@
   "atrustNotActive": "aTrust is not active in the current profile.",
   "atrustTunBypassTitle": "TUN bypasses private networks",
   "atrustTunBypassDesc": "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
-  "atrustDisableBypass": "Disable private-route bypass"
+  "atrustDisableBypass": "Disable private-route bypass",
+  "atrustGlobalAccountDesc": "The global account only controls the injected aTrust node. Nodes declared in the profile are managed above."
 }

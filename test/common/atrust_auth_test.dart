@@ -29,6 +29,8 @@ void main() {
               {
                 'name': 'atrust',
                 'state': 'ready',
+                'server': 'vpn.zju.edu.cn',
+                'port': 443,
                 'account': '3230100888',
                 'resources': 1472,
                 'domains': 689,
@@ -71,6 +73,8 @@ void main() {
     expect(providers.single.domains, 689);
     expect(providers.single.cidrs, 783);
     expect(providers.single.account, '3230100888');
+    expect(providers.single.server, 'vpn.zju.edu.cn');
+    expect(providers.single.port, 443);
   });
 
   test('creates and cancels a login session', () async {
@@ -83,6 +87,17 @@ void main() {
 
   test('logs out', () async {
     await api.logout('atrust');
+  });
+
+  test('selects the injected provider then keeps the current one', () {
+    const injected = AtrustStatus(name: 'atrust', state: 'ready');
+    const own = AtrustStatus(name: 'own', state: 'need_login');
+
+    expect(selectAtrustProviderName([own], null), 'own');
+    expect(selectAtrustProviderName([own, injected], null), 'atrust');
+    expect(selectAtrustProviderName([own, injected], 'own'), 'own');
+    expect(selectAtrustProviderName([own], 'missing'), 'own');
+    expect(selectAtrustProviderName([], 'own'), isNull);
   });
 
   test('turns an HTTP error into a readable exception', () async {

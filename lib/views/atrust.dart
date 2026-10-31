@@ -26,7 +26,9 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   late String _tunnel;
 
   Timer? _poll;
-  AtrustStatus? _status;
+  var _providers = <AtrustStatus>[];
+  String? _selectedName;
+  String? _sessionProvider;
   AtrustSession? _session;
   String? _listen;
   String? _error;
@@ -34,6 +36,19 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   var _polling = false;
 
   AtrustAccount get _account => ref.read(appSettingProvider).atrust;
+
+  AtrustStatus? get _status {
+    final name = _selectedName;
+    if (name == null) {
+      return null;
+    }
+    for (final provider in _providers) {
+      if (provider.name == name) {
+        return provider;
+      }
+    }
+    return null;
+  }
 
   @override
   void initState() {
@@ -43,9 +58,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     _usernameController = TextEditingController(text: account.username);
     _loginDomainController = TextEditingController(text: account.loginDomain);
     _tunnel = account.tunnel;
-    if (account.isConfigured) {
-      unawaited(_refresh());
-    }
+    unawaited(_refresh());
   }
 
   @override
@@ -64,9 +77,12 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
         return;
       }
       if (listen.isEmpty) {
+        _stopPolling();
         setState(() {
           _listen = null;
-          _status = null;
+          _providers = <AtrustStatus>[];
+          _selectedName = null;
+          _error = null;
         });
         return;
       }
@@ -74,26 +90,60 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       if (!mounted) {
         return;
       }
-      final status = providers.isEmpty
-          ? null
-          : providers.firstWhere(
-              (item) => item.name == atrustProxyName,
-              orElse: () => providers.first,
-            );
-      setState(() {
-        _listen = listen;
-        _status = status;
-        _error = status?.error.isNotEmpty == true ? status!.error : null;
-      });
-      if (status?.isPending == true) {
-        _startPolling();
-      } else {
-        _stopPolling();
-      }
+      _applyProviders(listen, providers);
     } catch (e) {
       if (mounted) {
         setState(() => _error = e.toString());
       }
+    }
+  }
+
+  void _applyProviders(String listen, List<AtrustStatus> providers) {
+    final ordered = [...providers]
+      ..sort((a, b) {
+        if (a.name == atrustProxyName) {
+          return -1;
+        }
+        if (b.name == atrustProxyName) {
+          return 1;
+        }
+        return a.name.compareTo(b.name);
+      });
+    final selected = _pickSelected(ordered);
+    final status = ordered
+        .where((provider) => provider.name == selected)
+        .firstOrNull;
+    setState(() {
+      _listen = listen;
+      _providers = ordered;
+      _selectedName = selected;
+      _error = status?.error.isNotEmpty == true ? status!.error : null;
+      if (status?.isReady == true ||
+          status?.state == 'error' ||
+          status?.state == 'expired' ||
+          status == null) {
+        _busy = false;
+      }
+    });
+    if (ordered.any((provider) => provider.isPending)) {
+      _startPolling();
+    } else {
+      _stopPolling();
+    }
+  }
+
+  String? _pickSelected(List<AtrustStatus> providers) {
+    return selectAtrustProviderName(providers, _selectedName);
+  }
+
+  void _selectProvider(String name) {
+    setState(() {
+      _selectedName = name;
+      final status = _status;
+      _error = status?.error.isNotEmpty == true ? status!.error : null;
+    });
+    if (_status?.isPending == true) {
+      _startPolling();
     }
   }
 
@@ -121,27 +171,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       if (!mounted) {
         return;
       }
-      final status = providers.isEmpty
-          ? null
-          : providers.firstWhere(
-              (item) => item.name == atrustProxyName,
-              orElse: () => providers.first,
-            );
-      setState(() {
-        _status = status;
-        _error = status?.error.isNotEmpty == true ? status!.error : null;
-        if (status?.isReady == true || status?.state == 'error') {
-          _busy = false;
-        }
-      });
-      if (status?.isReady == true) {
-        _stopPolling();
-      } else if (status?.state == 'error' ||
-          status?.state == 'expired' ||
-          status == null) {
-        _stopPolling();
-        _busy = false;
-      }
+      _applyProviders(_listen!, providers);
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -193,12 +223,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   }
 
   Future<void> _login() async {
-    if (!_account.isConfigured) {
-      await _saveAccount();
-      if (!_account.isConfigured) {
-        return;
-      }
-    }
     setState(() {
       _busy = true;
       _error = null;
@@ -208,7 +232,10 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       if (!mounted) {
         return;
       }
-      setState(() => _session = session);
+      setState(() {
+        _session = session;
+        _sessionProvider = _status?.name;
+      });
       final opened = await launchUrl(
         Uri.parse(session.url),
         mode: LaunchMode.externalApplication,
@@ -233,13 +260,12 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     for (var attempt = 0; attempt < 2; attempt++) {
       await _refresh();
       final listen = _listen;
-      if (listen == null || listen.isEmpty) {
+      final status = _status;
+      if (listen == null || listen.isEmpty || status == null) {
         throw AtrustAuthException(notActive, retryable: attempt == 0);
       }
       try {
-        return await AtrustAuthApi(
-          listen,
-        ).createSession(_status?.name ?? atrustProxyName);
+        return await AtrustAuthApi(listen).createSession(status.name);
       } on AtrustAuthException catch (e) {
         last = e;
         if (!e.retryable || attempt == 1) {
@@ -265,6 +291,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       setState(() {
         _busy = false;
         _session = null;
+        _sessionProvider = null;
       });
       await _refresh();
     }
@@ -272,6 +299,10 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
 
   Future<void> _logout() async {
     final notActive = context.appLocalizations.atrustNotActive;
+    final name = _status?.name;
+    if (name == null) {
+      return;
+    }
     setState(() => _busy = true);
     try {
       Object? lastError;
@@ -283,7 +314,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
           break;
         }
         try {
-          await AtrustAuthApi(listen).logout(_status?.name ?? atrustProxyName);
+          await AtrustAuthApi(listen).logout(name);
           lastError = null;
           break;
         } catch (e) {
@@ -361,11 +392,45 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     );
   }
 
+  Widget _buildProviderTabs() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (final provider in _providers)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: TonalChip(
+                label: provider.name,
+                color: provider.name == _selectedName
+                    ? context.colorScheme.primaryContainer
+                    : context.colorScheme.surfaceContainerHighest,
+                foregroundColor: provider.name == _selectedName
+                    ? context.colorScheme.onPrimaryContainer
+                    : context.colorScheme.onSurfaceVariant,
+                onPressed: () => _selectProvider(provider.name),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatusCard(AppLocalizations l) {
     final account = _account;
     final status = _status;
-    final pending = status?.isPending == true || (_busy && _session != null);
+    final pending =
+        status?.isPending == true ||
+        (_busy && _session != null && _sessionProvider == status?.name);
     final ready = status?.isReady == true;
+    final server = status?.server.isNotEmpty == true
+        ? '${status!.server}:${status.port}'
+        : '${account.server}:${account.port}';
+    final accountLabel = status?.account.isNotEmpty == true
+        ? status!.account
+        : status?.name == atrustProxyName
+        ? account.username
+        : (status?.name ?? account.username);
     return CommonCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -390,14 +455,11 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
             ],
           ),
           const SizedBox(height: 16),
-          Text('${account.server}:${account.port}'),
-          if (status?.account.isNotEmpty == true ||
-              account.username.isNotEmpty) ...[
+          Text(server),
+          if (accountLabel.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              status?.account.isNotEmpty == true
-                  ? status!.account
-                  : account.username,
+              accountLabel,
               style: TextStyle(color: context.colorScheme.onSurfaceVariant),
             ),
           ],
@@ -577,20 +639,20 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
           ),
         ),
       ],
-      footer: l.atrustSignInHint,
+      footer: l.atrustGlobalAccountDesc,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l = context.appLocalizations;
-    final configured = _account.isConfigured;
+    final hasProviders = _providers.isNotEmpty;
     final profileId = ref.watch(currentProfileIdProvider);
     final profile = profileId == null
         ? null
         : ref.watch(profileProvider(profileId));
     final showBypassWarning =
-        configured &&
+        hasProviders &&
         profile != null &&
         profile.overrides.atrust.enabled &&
         ref.watch(
@@ -609,21 +671,24 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
           bottom: 24 + context.bottomInset,
         ),
         children: [
-          if (configured) _buildStatusCard(l),
-          if (showBypassWarning) ...[
-            const SizedBox(height: 16),
-            _buildBypassWarning(l),
-          ],
-          if (!configured) ...[
+          if (hasProviders) ...[
+            _buildProviderTabs(),
+            const SizedBox(height: 12),
+            _buildStatusCard(l),
+          ] else ...[
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Text(
-                l.atrustSignInHint,
+                l.atrustNotActive,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
+          ],
+          if (showBypassWarning) ...[
+            const SizedBox(height: 16),
+            _buildBypassWarning(l),
           ],
           _buildProfileSettings(l),
           _buildAccountForm(l),

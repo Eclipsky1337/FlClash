@@ -982,7 +982,7 @@
   "atrustLoginFailed": "登录失败",
   "atrustOpenBrowserFailed": "无法打开登录页。",
   "atrustSave": "保存",
-  "atrustGlobalAccount": "全局账号",
+  "atrustGlobalAccount": "全局注入账号",
   "atrustProfile": "当前 profile",
   "atrustTunnelL3": "L3（推荐）",
   "atrustTunnelTcp": "TCP（兼容）",
@@ -991,5 +991,6 @@
   "atrustNotActive": "当前 profile 没有启用 aTrust。",
   "atrustTunBypassTitle": "TUN 正在绕过私有网段",
   "atrustTunBypassDesc": "aTrust 的内网地址（如 10.x）不会进入 TUN，SSH 和直接 IP 访问可能失败。",
-  "atrustDisableBypass": "关闭私有路由绕过"
+  "atrustDisableBypass": "关闭私有路由绕过",
+  "atrustGlobalAccountDesc": "全局账号仅用于向当前 profile 注入 aTrust 节点；profile 自带的 aTrust 节点由上方管理。"
 }

@@ -15,6 +15,8 @@ class AtrustStatus {
   const AtrustStatus({
     required this.name,
     required this.state,
+    this.server = '',
+    this.port = 0,
     this.account = '',
     this.error = '',
     this.resources = 0,
@@ -26,6 +28,8 @@ class AtrustStatus {
 
   final String name;
   final String state;
+  final String server;
+  final int port;
   final String account;
   final String error;
   final int resources;
@@ -42,6 +46,8 @@ class AtrustStatus {
     return AtrustStatus(
       name: json['name']?.toString() ?? '',
       state: json['state']?.toString() ?? '',
+      server: json['server']?.toString() ?? '',
+      port: count('port'),
       account: json['account']?.toString() ?? '',
       error: json['error']?.toString() ?? '',
       resources: count('resources'),
@@ -51,6 +57,25 @@ class AtrustStatus {
       updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? ''),
     );
   }
+}
+
+/// Picks the provider a page should show first: keep the current one, then the
+/// injected `atrust` node, then the first provider in core order.
+String? selectAtrustProviderName(
+  List<AtrustStatus> providers,
+  String? current,
+) {
+  if (providers.isEmpty) {
+    return null;
+  }
+  if (current != null &&
+      providers.any((provider) => provider.name == current)) {
+    return current;
+  }
+  if (providers.any((provider) => provider.name == 'atrust')) {
+    return 'atrust';
+  }
+  return providers.first.name;
 }
 
 class AtrustSession {

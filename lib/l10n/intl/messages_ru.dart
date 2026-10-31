@@ -353,6 +353,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
     ),
+    "atrustGlobalAccountDesc": MessageLookupByLibrary.simpleMessage(
+      "The global account only controls the injected aTrust node. Nodes declared in the profile are managed above.",
+    ),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("Login domain"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("Sign-in failed"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(

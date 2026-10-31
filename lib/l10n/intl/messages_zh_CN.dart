@@ -287,7 +287,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustConnected": MessageLookupByLibrary.simpleMessage("已连接"),
     "atrustDisableBypass": MessageLookupByLibrary.simpleMessage("关闭私有路由绕过"),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("会话已过期"),
-    "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局账号"),
+    "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局注入账号"),
+    "atrustGlobalAccountDesc": MessageLookupByLibrary.simpleMessage(
+      "全局账号仅用于向当前 profile 注入 aTrust 节点；profile 自带的 aTrust 节点由上方管理。",
+    ),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("登录域"),
     "atrustLoginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
     "atrustManagedDns": MessageLookupByLibrary.simpleMessage(
