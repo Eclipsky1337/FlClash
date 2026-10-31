@@ -55,7 +55,7 @@ Map<String, dynamic> injectAtrustConfig({
         ? List<String>.from(rawConfig['rules'] as List)
         : <String>[];
     for (final rule in [
-      'RULE-SET,$atrustIpProvider,$name,no-resolve',
+      'RULE-SET,$atrustIpProvider,$name',
       'RULE-SET,$atrustDomainProvider,$name',
     ]) {
       if (!rules.contains(rule)) {

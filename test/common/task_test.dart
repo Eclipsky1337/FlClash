@@ -894,7 +894,7 @@ void main() {
     expect(config['proxies'].last['username'], '3230100888');
     expect(config['rules'], [
       'RULE-SET,atrust-domain,atrust',
-      'RULE-SET,atrust-ip,atrust,no-resolve',
+      'RULE-SET,atrust-ip,atrust',
       'MATCH,DIRECT',
     ]);
     expect(config['dns']['nameserver-policy'], {
