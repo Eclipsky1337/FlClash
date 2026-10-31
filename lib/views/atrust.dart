@@ -32,7 +32,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   String? _error;
   var _busy = false;
   var _polling = false;
-  var _reloaded = false;
 
   AtrustAccount get _account => ref.read(appSettingProvider).atrust;
 
@@ -90,9 +89,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
         _startPolling();
       } else {
         _stopPolling();
-        if (status?.isReady == true) {
-          _reloadProfileOnce();
-        }
       }
     } catch (e) {
       if (mounted) {
@@ -140,7 +136,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
       });
       if (status?.isReady == true) {
         _stopPolling();
-        _reloadProfileOnce();
       } else if (status?.state == 'error' ||
           status?.state == 'expired' ||
           status == null) {
@@ -158,14 +153,6 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     } finally {
       _polling = false;
     }
-  }
-
-  void _reloadProfileOnce() {
-    if (_reloaded) {
-      return;
-    }
-    _reloaded = true;
-    unawaited(ref.read(setupActionProvider.notifier).applyProfile(force: true));
   }
 
   Future<void> _saveAccount() async {
@@ -212,24 +199,12 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
         return;
       }
     }
-    if (_listen == null || _listen!.isEmpty) {
-      await ref.read(setupActionProvider.notifier).applyProfile(force: true);
-      await _refresh();
-    }
-    final listen = _listen;
-    if (listen == null || listen.isEmpty) {
-      setState(() => _error = context.appLocalizations.atrustNotActive);
-      return;
-    }
     setState(() {
       _busy = true;
       _error = null;
-      _reloaded = false;
     });
     try {
-      final session = await AtrustAuthApi(
-        listen,
-      ).createSession(_status?.name ?? atrustProxyName);
+      final session = await _createSession();
       if (!mounted) {
         return;
       }
@@ -252,6 +227,32 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
     }
   }
 
+  Future<AtrustSession> _createSession() async {
+    final notActive = context.appLocalizations.atrustNotActive;
+    AtrustAuthException? last;
+    for (var attempt = 0; attempt < 2; attempt++) {
+      await _refresh();
+      final listen = _listen;
+      if (listen == null || listen.isEmpty) {
+        throw AtrustAuthException(notActive, retryable: attempt == 0);
+      }
+      try {
+        return await AtrustAuthApi(
+          listen,
+        ).createSession(_status?.name ?? atrustProxyName);
+      } on AtrustAuthException catch (e) {
+        last = e;
+        if (!e.retryable || attempt == 1) {
+          rethrow;
+        }
+        _listen = null;
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+      }
+    }
+    throw last ??
+        const AtrustAuthException('aTrust auth listener is unavailable');
+  }
+
   Future<void> _cancelLogin() async {
     final session = _session;
     _stopPolling();
@@ -270,6 +271,7 @@ class _AtrustViewState extends ConsumerState<AtrustView> {
   }
 
   Future<void> _logout() async {
+    await _refresh();
     final listen = _listen;
     if (listen == null) {
       return;

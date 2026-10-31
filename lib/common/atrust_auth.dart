@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 class AtrustAuthException implements Exception {
-  const AtrustAuthException(this.message);
+  const AtrustAuthException(this.message, {this.retryable = false});
 
   final String message;
+  final bool retryable;
 
   @override
   String toString() => message;
@@ -148,6 +149,8 @@ class AtrustAuthApi {
       return data;
     } on AtrustAuthException {
       rethrow;
+    } on SocketException catch (e) {
+      throw AtrustAuthException(e.toString(), retryable: true);
     } catch (e) {
       throw AtrustAuthException(e.toString());
     } finally {
