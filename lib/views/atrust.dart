@@ -63,6 +63,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     _loginDomainController = TextEditingController(text: account.loginDomain);
     _tunnel = account.tunnel;
     unawaited(_refresh());
+    _startPolling();
   }
 
   @override
@@ -89,7 +90,6 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         return;
       }
       if (listen.isEmpty) {
-        _stopPolling();
         setState(() {
           _listen = null;
           _providers = <AtrustStatus>[];
@@ -144,11 +144,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         }
       }
     });
-    if (ordered.any((provider) => provider.isPending)) {
-      _startPolling();
-    } else {
-      _stopPolling();
-    }
+    _startPolling();
   }
 
   String? _pickSelected(List<AtrustStatus> providers) {
@@ -327,7 +323,6 @@ class _AtrustViewState extends ConsumerState<AtrustView>
 
   Future<void> _cancelLogin() async {
     final session = _session;
-    _stopPolling();
     if (session != null && _listen != null) {
       try {
         await AtrustAuthApi(_listen!).cancelSession(session.id);
@@ -693,7 +688,6 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   Widget build(BuildContext context) {
     ref.listen<int?>(currentProfileIdProvider, (previous, next) {
       if (previous != next) {
-        _stopPolling();
         unawaited(_refresh());
       }
     });
