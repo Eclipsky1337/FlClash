@@ -203,7 +203,7 @@ func TestLoadConfigWithBaseKeepsInjectedProxiesAndGroups(t *testing.T) {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}
 	overlay := overlayOf(t, base, []string{
-		"RULE-SET,atrust-domain,aTrust",
+		"RULE-SET,atrust-domain-atrust,aTrust",
 		"MATCH,DIRECT",
 	}, map[string]any{
 		"proxies": []any{
