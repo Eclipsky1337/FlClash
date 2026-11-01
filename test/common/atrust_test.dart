@@ -26,6 +26,18 @@ void main() {
     expect(config['rules'], ['MATCH,DIRECT']);
   });
 
+  test('does nothing when the profile disables aTrust', () {
+    final config = _config();
+    injectAtrustConfig(
+      rawConfig: config,
+      account: _account,
+      settings: const AtrustProfileSettings(enabled: false),
+    );
+    expect(config['proxies'], hasLength(1));
+    expect(config['rules'], ['MATCH,DIRECT']);
+    expect(config['proxy-groups'], isNull);
+  });
+
   test('does nothing for a profile-owned aTrust node', () {
     final config = _config();
     (config['proxies'] as List).add({

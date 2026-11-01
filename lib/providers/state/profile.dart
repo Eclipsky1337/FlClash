@@ -59,14 +59,15 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
         )
       : ref.watch(
           patchClashConfigProvider.select(
-            (state) => ProfileOverrides(
-              dns: state.dns,
-              dnsOverrideKeys: state.dnsOverrideKeys.intersection(
-                DnsOverrideKey.normalProfileKeys,
-              ),
-              tun: state.tunOverride,
-              tunOverrideKeys: state.tunOverrideKeys,
-            ),
+            (state) =>
+                (profile?.overrides ?? const ProfileOverrides()).copyWith(
+                  dns: state.dns,
+                  dnsOverrideKeys: state.dnsOverrideKeys.intersection(
+                    DnsOverrideKey.normalProfileKeys,
+                  ),
+                  tun: state.tunOverride,
+                  tunOverrideKeys: state.tunOverrideKeys,
+                ),
           ),
         );
   final allProfileProviders = ref.watch(profileProvidersProvider);
