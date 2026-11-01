@@ -15,7 +15,7 @@ hooks:
 dependencies:
   flutter:
     sdk: flutter
-  material_ui: ^1.5.0
+  material_ui: 1.5.0
   intl: any
   path_provider: ^2.1.6
   path: ^1.9.1
@@ -43,6 +43,7 @@ dependencies:
   animations: ^3.0.0
   package_info_plus: ^10.2.2
   url_launcher: ^6.3.3
+  webview_flutter: ^4.9.0
   freezed_annotation: ^3.1.0
   image_picker: ^1.2.4
   ffi: ^2.2.0
@@ -89,7 +90,7 @@ dev_dependencies:
   drift_dev: ^2.35.1
   intl_utils: ^2.8.16
   test: ^1.31.1
-  sqlite3: ^3.7.0
+  sqlite3: 3.7.0
   cross_file: ^0.3.5+5
   mocktail: ^1.0.5
 

@@ -8,6 +8,7 @@ import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/views/atrust_webview.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -316,6 +317,16 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     }
   }
 
+  Uri _loginUri(String url) {
+    final uri = Uri.parse(url);
+    final theme = Theme.of(context).brightness == Brightness.dark
+        ? 'dark'
+        : 'light';
+    return uri.replace(
+      queryParameters: {...uri.queryParameters, 'theme': theme},
+    );
+  }
+
   Future<void> _login() async {
     _notifyError(null);
     setState(() {
@@ -331,11 +342,19 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         _sessionProvider = _status?.name;
         _loginProvider = _status?.name;
       });
+      final loginUri = _loginUri(session.url);
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => AtrustWebViewPage(url: loginUri.toString()),
+          ),
+        );
+        _startPolling(const Duration(seconds: 1));
+        return;
+      }
       final opened = await launchUrl(
-        Uri.parse(session.url),
-        mode: defaultTargetPlatform == TargetPlatform.android
-            ? LaunchMode.inAppWebView
-            : LaunchMode.externalApplication,
+        loginUri,
+        mode: LaunchMode.externalApplication,
       );
       if (!opened) {
         throw const AtrustAuthException('Could not open the sign-in page.');
