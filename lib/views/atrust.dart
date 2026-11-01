@@ -37,6 +37,9 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   var _busy = false;
   var _polling = false;
   var _pollFailures = 0;
+  var _pollingStopped = false;
+  var _paused = false;
+  var _showErrorDetail = false;
 
   AtrustAccount get _account => ref.read(appSettingProvider).atrust;
 
@@ -69,14 +72,20 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      _paused = false;
       unawaited(_refresh());
+      _startPolling();
+    } else {
+      _paused = true;
+      _poll?.cancel();
+      _poll = null;
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _poll?.cancel();
+    _stopPolling();
     _serverController.dispose();
     _usernameController.dispose();
     _loginDomainController.dispose();
@@ -98,6 +107,9 @@ class _AtrustViewState extends ConsumerState<AtrustView>
           _busy = false;
           _error = null;
         });
+        if (_pollingStopped) {
+          _startPolling();
+        }
         return;
       }
       final providers = await AtrustAuthApi(listen).providers();
@@ -144,7 +156,11 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         }
       }
     });
-    _startPolling();
+    if (ordered.any((provider) => provider.isPending)) {
+      _startPolling(const Duration(seconds: 1));
+    } else if (_pollingStopped) {
+      _startPolling();
+    }
   }
 
   String? _pickSelected(List<AtrustStatus> providers) {
@@ -162,16 +178,27 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     }
   }
 
-  void _startPolling() {
-    if (_poll != null) {
+  Duration get _pollDelay {
+    if (_busy || _providers.any((provider) => provider.isPending)) {
+      return const Duration(seconds: 1);
+    }
+    return const Duration(seconds: 10);
+  }
+
+  void _startPolling([Duration? delay]) {
+    if (!mounted || _paused) {
       return;
     }
-    _poll = Timer.periodic(const Duration(seconds: 1), (_) {
+    _pollingStopped = false;
+    _poll?.cancel();
+    _poll = Timer(delay ?? _pollDelay, () {
+      _poll = null;
       unawaited(_pollOnce());
     });
   }
 
   void _stopPolling() {
+    _pollingStopped = true;
     _poll?.cancel();
     _poll = null;
   }
@@ -222,6 +249,9 @@ class _AtrustViewState extends ConsumerState<AtrustView>
       }
     } finally {
       _polling = false;
+      if (!_pollingStopped && mounted && !_paused) {
+        _startPolling();
+      }
     }
   }
 
@@ -284,7 +314,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
       if (!opened) {
         throw const AtrustAuthException('Could not open the sign-in page.');
       }
-      _startPolling();
+      _startPolling(const Duration(seconds: 1));
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -439,6 +469,19 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     );
   }
 
+  Color _providerColor(String state) {
+    if (state == 'ready') {
+      return const Color(0xFF22C55E);
+    }
+    if (state == 'pending' || state == 'awaiting_input') {
+      return const Color(0xFFF59E0B);
+    }
+    if (state == 'error' || state == 'expired') {
+      return context.colorScheme.error;
+    }
+    return context.colorScheme.outline;
+  }
+
   Widget _buildProviderTabs() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -447,20 +490,60 @@ class _AtrustViewState extends ConsumerState<AtrustView>
           for (final provider in _providers)
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 8),
-              child: TonalChip(
-                label: provider.name,
-                color: provider.name == _selectedName
-                    ? context.colorScheme.primaryContainer
-                    : context.colorScheme.surfaceContainerHighest,
-                foregroundColor: provider.name == _selectedName
-                    ? context.colorScheme.onPrimaryContainer
-                    : context.colorScheme.onSurfaceVariant,
-                onPressed: () => _selectProvider(provider.name),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _providerColor(provider.state),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  TonalChip(
+                    label: provider.name,
+                    color: provider.name == _selectedName
+                        ? context.colorScheme.primaryContainer
+                        : context.colorScheme.surfaceContainerHighest,
+                    foregroundColor: provider.name == _selectedName
+                        ? context.colorScheme.onPrimaryContainer
+                        : context.colorScheme.onSurfaceVariant,
+                    onPressed: () => _selectProvider(provider.name),
+                  ),
+                ],
               ),
             ),
         ],
       ),
     );
+  }
+
+  String _friendlyError(String raw, AppLocalizations l) {
+    final text = raw.toLowerCase();
+    if (text.contains('connection refused') ||
+        text.contains('socketexception') ||
+        text.contains('auth listener')) {
+      return l.atrustErrorListener;
+    }
+    if (text.contains('timeout') ||
+        text.contains('timed out') ||
+        text.contains('deadline')) {
+      return l.atrustErrorTimeout;
+    }
+    if (text.contains('provider not found') ||
+        text.contains('404') ||
+        text.contains('not active')) {
+      return l.atrustErrorNoProvider;
+    }
+    if (text.contains('session not found') ||
+        text.contains('session has ended') ||
+        text.contains('stale_step') ||
+        text.contains('expired')) {
+      return l.atrustErrorSession;
+    }
+    return raw;
   }
 
   Widget _buildStatusCard(AppLocalizations l) {
@@ -547,7 +630,28 @@ class _AtrustViewState extends ConsumerState<AtrustView>
           ],
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: context.colorScheme.error)),
+            Text(
+              _friendlyError(_error!, l),
+              style: TextStyle(color: context.colorScheme.error),
+            ),
+            if (_friendlyError(_error!, l) != _error) ...[
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () =>
+                      setState(() => _showErrorDetail = !_showErrorDetail),
+                  child: Text(l.details(l.atrust)),
+                ),
+              ),
+              if (_showErrorDetail)
+                SelectableText(
+                  _error!,
+                  style: TextStyle(
+                    color: context.colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+            ],
           ],
         ],
       ),
@@ -593,6 +697,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
           ),
         ),
       ],
+      footer: l.atrustProfileHint,
     );
   }
 

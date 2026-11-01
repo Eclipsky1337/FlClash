@@ -57,7 +57,7 @@ Map<String, dynamic> injectAtrustConfig({
   final proxies = rawConfig['proxies'] is List
       ? List<Object?>.from(rawConfig['proxies'] as List)
       : <Object?>[];
-  final name = _uniqueProxyName(proxies);
+  final name = _uniqueProxyName(proxies, atrustProxyName);
   proxies.add({
     'name': name,
     'type': atrustProxyName,
@@ -75,7 +75,7 @@ Map<String, dynamic> injectAtrustConfig({
     final groups = rawConfig['proxy-groups'] is List
         ? List<Object?>.from(rawConfig['proxy-groups'] as List)
         : <Object?>[];
-    final groupName = _uniqueGroupName(groups);
+    final groupName = _uniqueGroupName(groups, proxies);
     groups.add({
       'name': groupName,
       'type': 'select',
@@ -120,25 +120,28 @@ Map<String, dynamic> injectAtrustConfig({
   return rawConfig;
 }
 
-String _uniqueProxyName(List<Object?> proxies) {
+String _uniqueProxyName(List<Object?> proxies, String preferred) {
   final names = {
     for (final proxy in proxies)
       if (proxy is Map && proxy['name'] != null) proxy['name'].toString(),
   };
-  if (!names.contains(atrustProxyName)) {
-    return atrustProxyName;
+  final base = preferred.isEmpty ? atrustProxyName : preferred;
+  if (!names.contains(base)) {
+    return base;
   }
   var index = 2;
-  while (names.contains('$atrustProxyName-$index')) {
+  while (names.contains('$base-$index')) {
     index++;
   }
-  return '$atrustProxyName-$index';
+  return '$base-$index';
 }
 
-String _uniqueGroupName(List<Object?> groups) {
+String _uniqueGroupName(List<Object?> groups, List<Object?> proxies) {
   final names = {
     for (final group in groups)
       if (group is Map && group['name'] != null) group['name'].toString(),
+    for (final proxy in proxies)
+      if (proxy is Map && proxy['name'] != null) proxy['name'].toString(),
   };
   if (!names.contains(atrustGroupName)) {
     return atrustGroupName;

@@ -341,6 +341,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "atrustDisableBypass": MessageLookupByLibrary.simpleMessage(
       "Disable private-route bypass",
     ),
+    "atrustErrorListener": MessageLookupByLibrary.simpleMessage(
+      "The aTrust login service is not ready. It may have just restarted; try again in a moment.",
+    ),
+    "atrustErrorNoProvider": MessageLookupByLibrary.simpleMessage(
+      "The current profile has no aTrust node.",
+    ),
+    "atrustErrorSession": MessageLookupByLibrary.simpleMessage(
+      "The login session expired or was replaced. Sign in again.",
+    ),
+    "atrustErrorTimeout": MessageLookupByLibrary.simpleMessage(
+      "Timed out connecting to the aTrust server. Check the network and retry.",
+    ),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("Session expired"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage(
       "Global account",
@@ -364,6 +376,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Could not open the sign-in page.",
     ),
     "atrustProfile": MessageLookupByLibrary.simpleMessage("Current profile"),
+    "atrustProfileHint": MessageLookupByLibrary.simpleMessage(
+      "Only applies when the profile has no aTrust node.",
+    ),
     "atrustRequiredFields": MessageLookupByLibrary.simpleMessage(
       "Server and username are required.",
     ),
