@@ -173,14 +173,31 @@ func applyConfig(params *SetupParams) error {
 		cfg = fallback
 	}
 
+	previous := currentConfig
 	currentConfig = cfg
 	hub.ApplyConfig(cfg)
+	closeAtrustProxies(previous)
 	patchSelectGroup(params.SelectedMap)
 	bumpRouteEpoch()
 	updateListeners(cfg)
 	reconcileGeoUpdater()
 	scheduleLoadMemoryRelease()
 	return err
+}
+
+// closeAtrustProxies releases the previous profile's aTrust outbounds so their
+// auth providers and DNS clients do not survive a profile switch. A provider
+// registered by the new config with the same name is protected by the registry's
+// identity check, so closing the old object cannot remove the replacement.
+func closeAtrustProxies(cfg *config.Config) {
+	if cfg == nil {
+		return
+	}
+	for _, proxy := range cfg.Proxies {
+		if proxy.Type() == constant.Atrust {
+			_ = proxy.Close()
+		}
+	}
 }
 
 func updateConfig(params *UpdateParams) error {
