@@ -40,6 +40,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   var _pollFailures = 0;
   var _pollingStopped = false;
   var _paused = false;
+  DateTime? _fastPollUntil;
 
   AtrustAccount get _account => ref.read(appSettingProvider).atrust;
 
@@ -86,8 +87,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _paused = false;
-      unawaited(_refresh());
-      _startPolling();
+      _refreshAfterConfigChange();
     } else {
       _paused = true;
       _poll?.cancel();
@@ -192,10 +192,19 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   }
 
   Duration get _pollDelay {
+    if (_fastPollUntil != null && DateTime.now().isBefore(_fastPollUntil!)) {
+      return const Duration(seconds: 1);
+    }
     if (_busy || _providers.any((provider) => provider.isPending)) {
       return const Duration(seconds: 1);
     }
     return const Duration(seconds: 10);
+  }
+
+  void _refreshAfterConfigChange() {
+    _fastPollUntil = DateTime.now().add(const Duration(seconds: 10));
+    unawaited(_refresh());
+    _startPolling(const Duration(seconds: 1));
   }
 
   void _startPolling([Duration? delay]) {
@@ -288,6 +297,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         .read(appSettingProvider.notifier)
         .update((state) => state.copyWith(atrust: account));
     _notifyError(null);
+    _fastPollUntil = DateTime.now().add(const Duration(seconds: 10));
     setState(() {
       _busy = true;
     });
@@ -681,6 +691,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
             ),
           ),
         );
+    _fastPollUntil = DateTime.now().add(const Duration(seconds: 10));
     unawaited(ref.read(setupActionProvider.notifier).applyProfile(force: true));
   }
 
@@ -755,7 +766,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   Widget build(BuildContext context) {
     ref.listen<int?>(currentProfileIdProvider, (previous, next) {
       if (previous != next) {
-        unawaited(_refresh());
+        _refreshAfterConfigChange();
       }
     });
     final l = context.appLocalizations;
