@@ -991,9 +991,5 @@
   "atrustTunBypassTitle": "TUN 正在绕过私有网段",
   "atrustTunBypassDesc": "aTrust 的内网地址（如 10.x）不会进入 TUN，SSH 和直接 IP 访问可能失败。",
   "atrustDisableBypass": "关闭私有路由绕过",
-  "atrustProfileHint": "仅在配置不包含 aTrust 类型节点时生效。",
-  "atrustErrorListener": "aTrust 登录服务未就绪，可能刚刚重启，请稍后重试。",
-  "atrustErrorTimeout": "连接 aTrust 服务器超时，请检查网络后重试。",
-  "atrustErrorNoProvider": "当前配置中没有 aTrust 节点。",
-  "atrustErrorSession": "登录会话已失效或被替换，请重新登录。"
+  "atrustProfileHint": "仅在配置不包含 aTrust 类型节点时生效。"
 }

@@ -1001,9 +1001,5 @@
   "atrustTunBypassTitle": "TUN bypasses private networks",
   "atrustTunBypassDesc": "aTrust internal addresses such as 10.x will not enter TUN, so SSH and direct IP access may fail.",
   "atrustDisableBypass": "Disable private-route bypass",
-  "atrustProfileHint": "Only applies when the profile has no aTrust node.",
-  "atrustErrorListener": "The aTrust login service is not ready. It may have just restarted; try again in a moment.",
-  "atrustErrorTimeout": "Timed out connecting to the aTrust server. Check the network and retry.",
-  "atrustErrorNoProvider": "The current profile has no aTrust node.",
-  "atrustErrorSession": "The login session expired or was replaced. Sign in again."
+  "atrustProfileHint": "Only applies when the profile has no aTrust node."
 }

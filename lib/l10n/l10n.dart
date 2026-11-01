@@ -8311,46 +8311,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
-  /// `The aTrust login service is not ready. It may have just restarted; try again in a moment.`
-  String get atrustErrorListener {
-    return Intl.message(
-      'The aTrust login service is not ready. It may have just restarted; try again in a moment.',
-      name: 'atrustErrorListener',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Timed out connecting to the aTrust server. Check the network and retry.`
-  String get atrustErrorTimeout {
-    return Intl.message(
-      'Timed out connecting to the aTrust server. Check the network and retry.',
-      name: 'atrustErrorTimeout',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `The current profile has no aTrust node.`
-  String get atrustErrorNoProvider {
-    return Intl.message(
-      'The current profile has no aTrust node.',
-      name: 'atrustErrorNoProvider',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `The login session expired or was replaced. Sign in again.`
-  String get atrustErrorSession {
-    return Intl.message(
-      'The login session expired or was replaced. Sign in again.',
-      name: 'atrustErrorSession',
-      desc: '',
-      args: [],
-    );
-  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

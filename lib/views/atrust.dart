@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fl_clash/common/atrust.dart';
 import 'package:fl_clash/common/atrust_auth.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -33,15 +34,27 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   String? _loginProvider;
   AtrustSession? _session;
   String? _listen;
-  String? _error;
+  String? _lastNotifiedError;
   var _busy = false;
   var _polling = false;
   var _pollFailures = 0;
   var _pollingStopped = false;
   var _paused = false;
-  var _showErrorDetail = false;
 
   AtrustAccount get _account => ref.read(appSettingProvider).atrust;
+
+  void _notifyError(Object? error) {
+    if (error == null) {
+      _lastNotifiedError = null;
+      return;
+    }
+    final text = error.toString();
+    if (text == _lastNotifiedError) {
+      return;
+    }
+    _lastNotifiedError = text;
+    dialogs.showNotifier(text, level: MessageLevel.error);
+  }
 
   AtrustStatus? get _status {
     final name = _selectedName;
@@ -105,8 +118,8 @@ class _AtrustViewState extends ConsumerState<AtrustView>
           _selectedName = null;
           _loginProvider = null;
           _busy = false;
-          _error = null;
         });
+        _notifyError(null);
         if (_pollingStopped) {
           _startPolling();
         }
@@ -119,7 +132,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
       _applyProviders(listen, providers);
     } catch (e) {
       if (mounted) {
-        setState(() => _error = e.toString());
+        _notifyError(e);
       }
     }
   }
@@ -144,7 +157,6 @@ class _AtrustViewState extends ConsumerState<AtrustView>
       _listen = listen;
       _providers = ordered;
       _selectedName = selected;
-      _error = status?.error.isNotEmpty == true ? status!.error : null;
       final loginName = _loginProvider;
       if (loginName != null) {
         final loginStatus = ordered
@@ -156,6 +168,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         }
       }
     });
+    _notifyError(status?.error.isNotEmpty == true ? status!.error : null);
     if (ordered.any((provider) => provider.isPending)) {
       _startPolling(const Duration(seconds: 1));
     } else if (_pollingStopped) {
@@ -170,9 +183,9 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   void _selectProvider(String name) {
     setState(() {
       _selectedName = name;
-      final status = _status;
-      _error = status?.error.isNotEmpty == true ? status!.error : null;
     });
+    final status = _status;
+    _notifyError(status?.error.isNotEmpty == true ? status!.error : null);
     if (_status?.isPending == true) {
       _startPolling();
     }
@@ -239,7 +252,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     } catch (e) {
       _pollFailures++;
       if (mounted) {
-        setState(() => _error = e.toString());
+        _notifyError(e);
       }
       if (_pollFailures >= 5) {
         if (mounted) {
@@ -260,7 +273,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     final username = _usernameController.text.trim();
     final loginDomain = _loginDomainController.text.trim();
     if (server.isEmpty || username.isEmpty) {
-      setState(() => _error = context.appLocalizations.atrustRequiredFields);
+      _notifyError(context.appLocalizations.atrustRequiredFields);
       return;
     }
     final account = AtrustAccount(
@@ -274,8 +287,8 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     ref
         .read(appSettingProvider.notifier)
         .update((state) => state.copyWith(atrust: account));
+    _notifyError(null);
     setState(() {
-      _error = null;
       _busy = true;
     });
     try {
@@ -283,7 +296,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
       await _refresh();
     } catch (e) {
       if (mounted) {
-        setState(() => _error = e.toString());
+        _notifyError(e);
       }
     } finally {
       if (mounted) {
@@ -293,9 +306,9 @@ class _AtrustViewState extends ConsumerState<AtrustView>
   }
 
   Future<void> _login() async {
+    _notifyError(null);
     setState(() {
       _busy = true;
-      _error = null;
     });
     try {
       final session = await _createSession();
@@ -320,8 +333,8 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         setState(() {
           _busy = false;
           _loginProvider = null;
-          _error = e.toString();
         });
+        _notifyError(e);
       }
     }
   }
@@ -397,7 +410,7 @@ class _AtrustViewState extends ConsumerState<AtrustView>
         }
       }
       if (mounted && lastError != null) {
-        setState(() => _error = lastError.toString());
+        _notifyError(lastError);
       }
     } finally {
       if (mounted) {
@@ -520,32 +533,6 @@ class _AtrustViewState extends ConsumerState<AtrustView>
     );
   }
 
-  String _friendlyError(String raw, AppLocalizations l) {
-    final text = raw.toLowerCase();
-    if (text.contains('connection refused') ||
-        text.contains('socketexception') ||
-        text.contains('auth listener')) {
-      return l.atrustErrorListener;
-    }
-    if (text.contains('timeout') ||
-        text.contains('timed out') ||
-        text.contains('deadline')) {
-      return l.atrustErrorTimeout;
-    }
-    if (text.contains('provider not found') ||
-        text.contains('404') ||
-        text.contains('not active')) {
-      return l.atrustErrorNoProvider;
-    }
-    if (text.contains('session not found') ||
-        text.contains('session has ended') ||
-        text.contains('stale_step') ||
-        text.contains('expired')) {
-      return l.atrustErrorSession;
-    }
-    return raw;
-  }
-
   Widget _buildStatusCard(AppLocalizations l) {
     final account = _account;
     final status = _status;
@@ -627,31 +614,6 @@ class _AtrustViewState extends ConsumerState<AtrustView>
                   ),
               ],
             ),
-          ],
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              _friendlyError(_error!, l),
-              style: TextStyle(color: context.colorScheme.error),
-            ),
-            if (_friendlyError(_error!, l) != _error) ...[
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton(
-                  onPressed: () =>
-                      setState(() => _showErrorDetail = !_showErrorDetail),
-                  child: Text(l.details(l.atrust)),
-                ),
-              ),
-              if (_showErrorDetail)
-                SelectableText(
-                  _error!,
-                  style: TextStyle(
-                    color: context.colorScheme.onSurfaceVariant,
-                    fontSize: 12,
-                  ),
-                ),
-            ],
           ],
         ],
       ),

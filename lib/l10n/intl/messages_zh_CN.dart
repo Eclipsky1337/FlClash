@@ -286,18 +286,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "atrustConnected": MessageLookupByLibrary.simpleMessage("已连接"),
     "atrustDisableBypass": MessageLookupByLibrary.simpleMessage("关闭私有路由绕过"),
-    "atrustErrorListener": MessageLookupByLibrary.simpleMessage(
-      "aTrust 登录服务未就绪，可能刚刚重启，请稍后重试。",
-    ),
-    "atrustErrorNoProvider": MessageLookupByLibrary.simpleMessage(
-      "当前配置中没有 aTrust 节点。",
-    ),
-    "atrustErrorSession": MessageLookupByLibrary.simpleMessage(
-      "登录会话已失效或被替换，请重新登录。",
-    ),
-    "atrustErrorTimeout": MessageLookupByLibrary.simpleMessage(
-      "连接 aTrust 服务器超时，请检查网络后重试。",
-    ),
     "atrustExpired": MessageLookupByLibrary.simpleMessage("会话已过期"),
     "atrustGlobalAccount": MessageLookupByLibrary.simpleMessage("全局账号"),
     "atrustLoginDomain": MessageLookupByLibrary.simpleMessage("登录域"),
