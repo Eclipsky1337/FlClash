@@ -898,12 +898,12 @@ void main() {
       'proxies': ['atrust', 'DIRECT'],
     });
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,aTrust',
-      'RULE-SET,atrust-ip,aTrust',
+      'RULE-SET,atrust-domain-atrust,aTrust',
+      'RULE-SET,atrust-ip-atrust,aTrust',
       'MATCH,DIRECT',
     ]);
     expect(config['dns']['nameserver-policy'], {
-      'rule-set:atrust-domain': 'atrust://atrust',
+      'rule-set:atrust-domain-atrust': 'atrust://atrust',
     });
   });
 

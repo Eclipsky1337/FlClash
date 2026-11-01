@@ -70,12 +70,12 @@ void main() {
       },
     ]);
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,aTrust',
-      'RULE-SET,atrust-ip,aTrust',
+      'RULE-SET,atrust-domain-atrust,aTrust',
+      'RULE-SET,atrust-ip-atrust,aTrust',
       'MATCH,DIRECT',
     ]);
     expect(config['dns'], {
-      'nameserver-policy': {'rule-set:atrust-domain': 'atrust://atrust'},
+      'nameserver-policy': {'rule-set:atrust-domain-atrust': 'atrust://atrust'},
       'proxy-server-nameserver': [atrustFallbackProxyServerNameserver],
     });
   });
@@ -126,8 +126,8 @@ void main() {
     expect(config['proxies'], hasLength(2));
     expect(config['proxy-groups'], hasLength(1));
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,aTrust',
-      'RULE-SET,atrust-ip,aTrust',
+      'RULE-SET,atrust-domain-atrust,aTrust',
+      'RULE-SET,atrust-ip-atrust,aTrust',
       'MATCH,DIRECT',
     ]);
   });
@@ -146,12 +146,12 @@ void main() {
       'DIRECT',
     ]);
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,aTrust',
-      'RULE-SET,atrust-ip,aTrust',
+      'RULE-SET,atrust-domain-atrust-2,aTrust',
+      'RULE-SET,atrust-ip-atrust-2,aTrust',
       'MATCH,DIRECT',
     ]);
     expect((config['dns'] as Map)['nameserver-policy'], {
-      'rule-set:atrust-domain': 'atrust://atrust-2',
+      'rule-set:atrust-domain-atrust-2': 'atrust://atrust-2',
     });
   });
 
@@ -171,8 +171,8 @@ void main() {
     );
     expect((config['proxy-groups'] as List).last['name'], 'aTrust-2');
     expect(config['rules'], [
-      'RULE-SET,atrust-domain,aTrust-2',
-      'RULE-SET,atrust-ip,aTrust-2',
+      'RULE-SET,atrust-domain-atrust,aTrust-2',
+      'RULE-SET,atrust-ip-atrust,aTrust-2',
       'MATCH,DIRECT',
     ]);
   });

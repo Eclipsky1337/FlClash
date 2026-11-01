@@ -2,9 +2,28 @@ import 'package:fl_clash/models/models.dart';
 
 const atrustProxyName = 'atrust';
 const atrustGroupName = 'aTrust';
-const atrustDomainProvider = 'atrust-domain';
-const atrustIpProvider = 'atrust-ip';
 const atrustFallbackProxyServerNameserver = 'https://doh.pub/dns-query';
+
+String atrustProviderSuffix(String name) {
+  final buffer = StringBuffer();
+  for (final rune in name.runes) {
+    final valid =
+        (rune >= 0x61 && rune <= 0x7a) ||
+        (rune >= 0x41 && rune <= 0x5a) ||
+        (rune >= 0x30 && rune <= 0x39) ||
+        rune == 0x5f ||
+        rune == 0x2d ||
+        rune == 0x2e;
+    buffer.writeCharCode(valid ? rune : 0x5f);
+  }
+  return buffer.isEmpty ? 'node' : buffer.toString();
+}
+
+String atrustDomainProviderFor(String name) =>
+    'atrust-domain-${atrustProviderSuffix(name)}';
+
+String atrustIpProviderFor(String name) =>
+    'atrust-ip-${atrustProviderSuffix(name)}';
 
 /// Whether the profile already declares its own aTrust outbound. A profile-owned
 /// node wins over the global account, so the overlay must not add a second one.
@@ -68,8 +87,8 @@ Map<String, dynamic> injectAtrustConfig({
         ? List<String>.from(rawConfig['rules'] as List)
         : <String>[];
     for (final rule in [
-      'RULE-SET,$atrustIpProvider,$groupName',
-      'RULE-SET,$atrustDomainProvider,$groupName',
+      'RULE-SET,${atrustIpProviderFor(name)},$groupName',
+      'RULE-SET,${atrustDomainProviderFor(name)},$groupName',
     ]) {
       if (!rules.contains(rule)) {
         rules.insert(0, rule);
@@ -86,7 +105,7 @@ Map<String, dynamic> injectAtrustConfig({
         ? Map<String, dynamic>.from(dns['nameserver-policy'] as Map)
         : <String, dynamic>{};
     policy.putIfAbsent(
-      'rule-set:$atrustDomainProvider',
+      'rule-set:${atrustDomainProviderFor(name)}',
       () => 'atrust://$name',
     );
     dns['nameserver-policy'] = policy;
