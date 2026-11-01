@@ -9,6 +9,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -332,7 +333,9 @@ class _AtrustViewState extends ConsumerState<AtrustView>
       });
       final opened = await launchUrl(
         Uri.parse(session.url),
-        mode: LaunchMode.externalApplication,
+        mode: defaultTargetPlatform == TargetPlatform.android
+            ? LaunchMode.inAppWebView
+            : LaunchMode.externalApplication,
       );
       if (!opened) {
         throw const AtrustAuthException('Could not open the sign-in page.');
